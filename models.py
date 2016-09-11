@@ -38,6 +38,33 @@ class Account(models.Model):
     def get_full_name(self):
         return ' '.join([self.firstname, self.middleinitial, self.lastname]).title()
 
+    def location_as_json(self):
+        return {
+            "address" : self.address,
+            "postalCode" : self.postalcode,
+            "city" : self.city,
+            "countryCode" : self.countrycode,
+            "region" : self.region,
+        }
+
+    def as_json(self):
+        profiles_list = []
+
+        for profile in Profile.objects.filter(user=self.user):
+            profiles_list.append(profile.as_json())
+
+        return {
+            "name" : self.get_full_name(),
+            "label" : self.label,
+            "picture" : self.picture.image,
+            "email" : self.user.email,
+            "phone" : self.phone,
+            "website" : self.website,
+            "summary" : self. summary,
+            "location" : self.location_as_json(),
+            "profiles" : profiles_list,
+        }
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User)
@@ -61,6 +88,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.network + " " + self.username
 
+    def as_json(self):
+        return {
+            "network" : self.get_network_display(),
+            "username" : self.username,
+            "url" : self.url
+        }
+
 
 class Work(models.Model):
     user = models.ForeignKey(User)
@@ -79,11 +113,34 @@ class Work(models.Model):
     def __str__(self):
         return self.company + " - " + self.position
 
+    def as_json(self):
+        highlights_list = []
+        work_dict = {
+            "position" : self.position,
+            "website" : self.website,
+            "startDate" : self.startDate,
+            "endDate" : self.endDate,
+            "summary" : self.summary,
+        }
+
+        if self.volunteer:
+            work_dict["organization"] = self.company
+        else:
+            work_dict["company"] = self.company
+
+        for highlight in WorkHighlight.objects.filter(work=self):
+            highlights_list.append(highlight.text)
+
+        work_dict["highlights"] = highlights_list
+
+        return work_dict
+
+
 
 class WorkHighlight(models.Model):
     work = models.ForeignKey(Work)
 
-    highlight = models.TextField()
+    text = models.TextField()
 
     def __str__(self):
         return self.highlight[:30] + " - " + self.work.company
@@ -105,6 +162,21 @@ class Education(models.Model):
     def __str__(self):
         return self.area + " - " + self.institution
 
+    def as_json(self):
+        course_list = []
+        for course in Course.objects.filter(education=self):
+            course_list.append(course.__str__())
+
+        return {
+            "institution" : self.institution,
+            "area" : self.area,
+            "studyType" : self.studyType,
+            "startDate" : self.startDate,
+            "endDate" : self.endDate,
+            "gpa" : self.gpa,
+            "courses" : course_list,
+        }
+
 
 class Course(models.Model):
     education = models.ForeignKey(Education)
@@ -113,7 +185,7 @@ class Course(models.Model):
     description = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.coursecode + " - " + self.education.institution
+        return self.coursecode + " - " + self.description
 
 
 class Award(models.Model):
@@ -129,6 +201,14 @@ class Award(models.Model):
 
     def __str__(self):
         return self.title
+
+    def as_json(self):
+        return {
+            "title" : self.title,
+            "date" : self.date,
+            "awarder" : self.awarder,
+            "summary" : self.summary,
+        }
 
 
 class Publication(models.Model):
@@ -146,6 +226,15 @@ class Publication(models.Model):
     def __str__(self):
         return self.name + " - " + self.publisher
 
+    def as_json(self):
+        return {
+            "name" : self.name,
+            "publisher" : self.publisher,
+            "releaseDate" : self.releaseDate,
+            "website" : self.website,
+            "summary" : self.summary,
+        }
+
 
 class Keyword(models.Model):
     word = models.CharField(max_length=50)
@@ -159,10 +248,22 @@ class Skill(models.Model):
 
     name = models.CharField(max_length=150)
     level = models.CharField(max_length=25)
-    keyword = models.ManyToManyField(Keyword)
+    keywords = models.ManyToManyField(Keyword)
 
     def __str__(self):
         return self.name
+
+    def as_json(self):
+        keyword_list = []
+
+        for keyword in self.keywords.all():
+            keyword_list.append(keyword.word)
+
+        return {
+            "name" : self.name,
+            "level" : self.level,
+            "keywords" : keyword_list,
+        }
 
 
 class Language(models.Model):
@@ -174,15 +275,32 @@ class Language(models.Model):
     def __str__(self):
         return self.name
 
+    def as_json(self):
+        return {
+            "name" : self.name,
+            "level" : self.level,
+        }
+
 
 class Interest(models.Model):
     user = models.ForeignKey(User)
 
     name = models.CharField(max_length=50)
-    keyword = models.ManyToManyField(Keyword)
+    keywords = models.ManyToManyField(Keyword)
 
     def __str__(self):
         return self.name
+
+    def as_json(self):
+        keyword_list = []
+
+        for keyword in self.keywords.all():
+            keyword_list.append(keyword.word)
+
+        return {
+            "name" : self.name,
+            "keywords" : keyword_list,
+        }
 
 
 class Reference(models.Model):
@@ -194,17 +312,82 @@ class Reference(models.Model):
     def __str__(self):
         return self.name
 
+    def as_json(self):
+        return {
+            "name" : self.name,
+            "reference" : self.reference,
+        }
 
 class Resume(models.Model):
     name = models.CharField(max_length=50)
-    resumeType = models.CharField(max_length=25)
+    RESUME_TYPES =(
+        ('generic', 'Generic'),
+        ('programmer', 'Computer Programmer')
+    )
+    resumeType = models.CharField(max_length=25, choices=RESUME_TYPES)
     user = models.ForeignKey(User)
     published = models.BooleanField(default=False)
-    profiles = models.ManyToManyField(Profile)
-    work = models.ManyToManyField(Work)
-    education = models.ManyToManyField(Education)
-    awards = models.ManyToManyField(Award)
-    publications = models.ManyToManyField(Publication)
-    skills = models.ManyToManyField(Skill)
-    languages = models.ManyToManyField(Language)
-    interests = models.ManyToManyField(Interest)
+    publishReferences = models.BooleanField(default=False)
+    profiles = models.ManyToManyField(Profile, blank=True)
+    work = models.ManyToManyField(Work, blank=True)
+    education = models.ManyToManyField(Education, blank=True)
+    awards = models.ManyToManyField(Award, blank=True)
+    publications = models.ManyToManyField(Publication, blank=True)
+    skills = models.ManyToManyField(Skill, blank=True)
+    languages = models.ManyToManyField(Language, blank=True)
+    interests = models.ManyToManyField(Interest, blank=True)
+    references = models.ManyToManyField(Reference, blank=True)
+
+    def as_json(self):
+        resume_dict = {}
+        work_list = []
+        volunteer_list = []
+        education_list = []
+        awards_list = []
+        publications_list = []
+        skills_list = []
+        language_list = []
+        interests_list = []
+        references_list = []
+
+        account = Account.objects.get(user=self.user)
+
+        for work in self.work.all():
+            if work.volunteer:
+                volunteer_list.append(work.as_json())
+            else:
+                work_list.append(work.as_json())
+
+        for education in self.education.all():
+            education_list.append(education.as_json())
+
+        for award in self.awards.all():
+            awards_list.append(award.as_json())
+
+        for publication in self.publications.all():
+            publications_list.append(publication.as_json())
+
+        for skill in self.skills.all():
+            skills_list.append(skill.as_json())
+
+        for language in self.languages.all():
+            language_list.append(language.as_json())
+
+        for interest in self.interests.all():
+            interests_list.append(interest.as_json())
+
+        for reference in self.references.all():
+            references_list.append(reference.as_json())
+
+        return {
+            "basics" : account.as_json(),
+            "work" : work_list,
+            "volunteer" : volunteer_list,
+            "education" : education_list,
+            "awards" : awards_list,
+            "publications" : publications_list,
+            "skills" : skills_list,
+            "languages" : language_list,
+            "interests" : interests_list,
+            "references" : references_list,
+        }
