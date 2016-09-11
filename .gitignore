@@ -1,3 +1,6 @@
 migrations
 dev.py
 __pycache__
+.git
+.gitignore
+templates/base.html

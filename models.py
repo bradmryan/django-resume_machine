@@ -47,12 +47,14 @@ class Account(models.Model):
             "region" : self.region,
         }
 
-    def as_json(self):
+    def profiles_as_json(self):
         profiles_list = []
-
         for profile in Profile.objects.filter(user=self.user):
             profiles_list.append(profile.as_json())
+        return profiles_list
 
+
+    def as_json(self):
         return {
             "name" : self.get_full_name(),
             "label" : self.label,
@@ -62,7 +64,59 @@ class Account(models.Model):
             "website" : self.website,
             "summary" : self. summary,
             "location" : self.location_as_json(),
-            "profiles" : profiles_list,
+            "profiles" : self.profiles_as_json(),
+        }
+
+    def as_resume_json(self):
+        resume_dict = {}
+        work_list = []
+        volunteer_list = []
+        education_list = []
+        awards_list = []
+        publications_list = []
+        skills_list = []
+        language_list = []
+        interests_list = []
+        references_list = []
+
+        for work in Work.objects.filter(user=self.user):
+            if work.volunteer:
+                volunteer_list.append(work.as_json())
+            else:
+                work_list.append(work.as_json())
+
+        for education in Education.objects.filter(user=self.user):
+            education_list.append(education.as_json())
+
+        for award in Award.objects.filter(user=self.user):
+            awards_list.append(award.as_json())
+
+        for publication in Publication.objects.filter(user=self.user):
+            publications_list.append(publication.as_json())
+
+        for skill in Skill.objects.filter(user=self.user):
+            skills_list.append(skill.as_json())
+
+        for language in Language.objects.filter(user=self.user):
+            language_list.append(language.as_json())
+
+        for interest in Interest.objects.filter(user=self.user):
+            interests_list.append(interest.as_json())
+
+        for reference in Reference.objects.filter(user=self.user):
+            references_list.append(reference.as_json())
+
+        return {
+            "basics" : self.as_json(),
+            "work" : work_list,
+            "volunteer" : volunteer_list,
+            "education" : education_list,
+            "awards" : awards_list,
+            "publications" : publications_list,
+            "skills" : skills_list,
+            "languages" : language_list,
+            "interests" : interests_list,
+            "references" : references_list,
         }
 
 
@@ -338,56 +392,76 @@ class Resume(models.Model):
     interests = models.ManyToManyField(Interest, blank=True)
     references = models.ManyToManyField(Reference, blank=True)
 
-    def as_json(self):
-        resume_dict = {}
-        work_list = []
-        volunteer_list = []
-        education_list = []
-        awards_list = []
-        publications_list = []
-        skills_list = []
-        language_list = []
-        interests_list = []
-        references_list = []
-
+    def basic_as_json(self):
         account = Account.objects.get(user=self.user)
+        return account.as_json()
 
+    def work_as_json(self):
+        work_list = []
+        for work in self.work.all():
+            if not work.volunteer:
+                work_list.append(work.as_json())
+        return work_list
+
+    def volunteer_as_json(self):
+        volunteer_list = []
         for work in self.work.all():
             if work.volunteer:
                 volunteer_list.append(work.as_json())
-            else:
-                work_list.append(work.as_json())
+        return volunteer_list
 
+    def education_as_json(self):
+        education_list = []
         for education in self.education.all():
             education_list.append(education.as_json())
+        return education_list
 
+    def awards_as_json(self):
+        awards_list = []
         for award in self.awards.all():
             awards_list.append(award.as_json())
+        return awards_list
 
+    def publications_as_json(self):
+        publications_list = []
         for publication in self.publications.all():
             publications_list.append(publication.as_json())
+        return publications_list
 
+    def skills_as_json(self):
+        skills_list = []
         for skill in self.skills.all():
             skills_list.append(skill.as_json())
+        return skills_list
 
+    def languages_as_json(self):
+        languages_list = []
         for language in self.languages.all():
-            language_list.append(language.as_json())
+            languages_list.append(language.as_json())
+        return languages_list
 
+    def interests_as_json(self):
+        interests_list = []
         for interest in self.interests.all():
             interests_list.append(interest.as_json())
+        return interests_list
 
+    def references_as_json(self):
+        references_list = []
         for reference in self.references.all():
             references_list.append(reference.as_json())
+        return references_list
 
+    def as_json(self):
         return {
-            "basics" : account.as_json(),
-            "work" : work_list,
-            "volunteer" : volunteer_list,
-            "education" : education_list,
-            "awards" : awards_list,
-            "publications" : publications_list,
-            "skills" : skills_list,
-            "languages" : language_list,
-            "interests" : interests_list,
-            "references" : references_list,
+            "basics" : self.basic_as_json(),
+            "work" : self.work_as_json(),
+            "volunteer" : self.volunteer_as_json(),
+            "education" : self.education_as_json(),
+            "awards" : self.awards_as_json(),
+            "publications" : self.publications_as_json(),
+            "skills" : self.skills_as_json(),
+            "languages" : self.languages_as_json(),
+            "interests" : self.interests_as_json(),
+            "references" : self.references_as_json(),
         }
