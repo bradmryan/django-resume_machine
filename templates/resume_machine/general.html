@@ -68,32 +68,34 @@
         {% endif %}
       {% endfor %}
 
-      {% if resume.awards %}<strong>Awards</strong><hr>
+      {% for award in resume.awards.all %}
+        {% ifchanged %}
+          <strong>Awards</strong><hr>
+        {% endifchanged %}
         <div class="indent">
-          {% for award in resume.awards.all %}
-            <p>
-              <strong>{{ award.title }}</strong><br>
-              {{ award.awarder }}<br>
-              {{ award.date }}<br>
-              {{ award.summary }}
-            </p>
-          {% endfor %}
+          <p>
+            <strong>{{ award.title }}</strong><br>
+            {{ award.awarder }}<br>
+            {{ award.date }}<br>
+            {{ award.summary }}
+          </p>
         </div>
-      {% endif %}
+      {% endfor %}
 
-      {% if resume.publications %}<strong>Publications</strong><hr>
+      {% for publication in resume.publications.all %}
+        {% ifchanged %}
+          <strong>Publications</strong><hr>
+        {% endifchanged %}
         <div class="indent">
-          {% for publication in resume.publications.all %}
-            <p>
-              <strong>{{ publication.name }}</strong><br>
-              {{ publication.publisher }}<br>
-              {{ publication.releaseDate }}<br>
-              {{ publication.website }}<br>
-              {{ publication.summary }}
-            </p>
-          {% endfor %}
+          <p>
+            <strong>{{ publication.name }}</strong><br>
+            {{ publication.publisher }}<br>
+            {{ publication.releaseDate }}<br>
+            {{ publication.website }}<br>
+            {{ publication.summary }}
+          </p>
         </div>
-      {% endif %}
+      {% endfor %}
 
       {% if resume.skills %}<strong>Skills</strong><hr>
         <div class="indent">
@@ -126,7 +128,7 @@
           {% endfor %}
         </div>
       {% endif %}
-      
+
       <strong>References</strong><hr>
       <div class="indent">
         {% if resume.publishReferences %}
