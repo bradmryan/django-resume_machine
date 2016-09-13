@@ -126,10 +126,12 @@ class Profile(models.Model):
     FACEBOOK = 'FB'
     TWITTER = 'TW'
     LINKEDIN = 'LI'
+    GITHUB = 'GH'
     NETWORK_CHOICES = (
         (FACEBOOK, 'Facebook'),
         (TWITTER, 'Twitter'),
         (LINKEDIN, 'Linkedin'),
+        (GITHUB, 'Github')
     )
 
     network = models.CharField(max_length=2, choices=NETWORK_CHOICES)
