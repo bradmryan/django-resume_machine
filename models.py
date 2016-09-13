@@ -197,7 +197,7 @@ class WorkHighlight(models.Model):
     text = models.TextField()
 
     def __str__(self):
-        return self.highlight[:30] + " - " + self.work.company
+        return self.text[:30] + " - " + self.work.company
 
 
 class Education(models.Model):
@@ -391,6 +391,9 @@ class Resume(models.Model):
     languages = models.ManyToManyField(Language, blank=True)
     interests = models.ManyToManyField(Interest, blank=True)
     references = models.ManyToManyField(Reference, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'name')
 
     def basic_as_json(self):
         account = Account.objects.get(user=self.user)

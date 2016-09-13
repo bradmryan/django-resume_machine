@@ -53,6 +53,34 @@
           {% endfor %}
         </div>
       {% endif %}
+
+      {% if resume.awards %}<strong>Awards</strong><hr>
+        <div class="indent">
+          {% for award in resume.awards.all %}
+            <p>
+              <strong>{{ award.title }}</strong><br>
+              {{ award.awarder }}<br>
+              {{ award.date }}<br>
+              {{ award.summary }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if resume.publications %}<strong>Publications</strong><hr>
+        <div class="indent">
+          {% for publication in resume.publications.all %}
+            <p>
+              <strong>{{ publication.name }}</strong><br>
+              {{ publication.publisher }}<br>
+              {{ publication.releaseDate }}<br>
+              {{ publication.website }}<br>
+              {{ publication.summary }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
       <strong>Work History</strong><hr>
       <div class="indent">
         {% for job in resume.work.all %}
@@ -64,6 +92,7 @@
           {% endif %}
         {% endfor %}
       </div>
+
       <strong>Volunteer History</strong><hr>
       {% for job in resume.work.all %}
         {% if job.volunteer %}
@@ -91,6 +120,7 @@
           {% endfor %}
         </div>
       {% endif %}
+      
       <strong>References</strong><hr>
       <div class="indent">
         {% if resume.publishReferences %}

@@ -1,1 +1,142 @@
-<h1>Nope</h1>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+      }
+      p {
+        font-size: 12px;
+        padding: 0 0 0 0;
+      }
+      .indent {
+        padding-left: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>{{ user.account.get_full_name }}</h1><hr>
+      <div class="indent">
+        <p>{{ user.account.city }}, {{ user.account.region}}, {{ user.account.countrycode }}</p>
+        <p>{{ user.email }}</p>
+        <p>{{ user.account.phone }}</p>
+        <p>{{ user.account.website }}</p>
+      </div>
+      <strong>Summary</strong><hr>
+      <div class="indent">
+        <p>{{ user.account.summary }}</p>
+      </div>
+        {% for edu in resume.education.all %}
+          {% if forloop.first %}
+          <strong>Education</strong><hr>
+          {% endif %}
+          <div class="indent">
+            <p><strong>{{ edu.institution }}</strong><br>
+            {{ edu.studyType }} in {{ edu.area }}<br>
+            {{ edu.startDate }} - {{ edu.endDate}}</p>
+          </div>
+        {% endfor %}
+
+        {% for job in resume.work.all %}
+        {% if forloop.first %}
+          <strong>Work History</strong><hr>
+        {% endif %}
+          <div class="indent">
+            {% if not job.volunteer %}
+              <p><strong>{{ job.position }}</strong><br>
+              <i>{{ job.company }}</i><br>
+              {{ job.summary }}<br>
+              {{ job.startDate }} - {{ job.endDate }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+      {% for job in resume.work.all %}
+        {% if job.volunteer %}
+        {% ifchanged %}
+          <strong>Volunteer History</strong><hr>
+        {% endifchanged %}
+          <div class="indent">
+            <p><strong>{{ job.position }}</strong><br>
+            <i>{{ job.company }}</i><br>
+            {{ job.summary }}<br>
+            {{ job.startDate }} - {{ job.endDate }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if resume.awards %}<strong>Awards</strong><hr>
+        <div class="indent">
+          {% for award in resume.awards.all %}
+            <p>
+              <strong>{{ award.title }}</strong><br>
+              {{ award.awarder }}<br>
+              {{ award.date }}<br>
+              {{ award.summary }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if resume.publications %}<strong>Publications</strong><hr>
+        <div class="indent">
+          {% for publication in resume.publications.all %}
+            <p>
+              <strong>{{ publication.name }}</strong><br>
+              {{ publication.publisher }}<br>
+              {{ publication.releaseDate }}<br>
+              {{ publication.website }}<br>
+              {{ publication.summary }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if resume.skills %}<strong>Skills</strong><hr>
+        <div class="indent">
+          {% for skill in resume.skills.all %}
+            <p>
+              {{ skill.name }}:
+              {% for keyword in skill.keywords.all %}
+                {% if forloop.last %}
+                  <i>{{ keyword.word }}</i>
+                {% else %}
+                  <i>{{ keyword.word }}, </i>
+                {% endif %}
+              {% endfor %}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if resume.interests %}<strong>Interests</strong><hr>
+        <div class="indent">
+          {% for interest in resume.interests.all %}
+            <p>{{ interest.name }}:
+              {% for keyword in interest.keywords.all %}
+                {% if forloop.last %}
+                  <i>{{ keyword.word }}</i>
+                {% else %}
+                  <i>{{ keyword.word }}, </i>
+                {% endif %}
+              </p>
+              {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <strong>References</strong><hr>
+      <div class="indent">
+        {% if resume.publishReferences %}
+          {% for reference in resume.references.all %}
+            <p>{{ reference.name }} - <i>{{ reference.reference }}</i></p>
+          {% endfor %}
+        {% else %}
+          <p>For privacy, references are available only on request</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

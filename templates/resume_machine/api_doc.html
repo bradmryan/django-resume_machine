@@ -16,7 +16,7 @@
         </p>
       </div>
     </div>
-    <pre><strong>host:</strong> {{ site.domain }}</pre>
+    <pre><strong>host:</strong>{{ site.domain }}{% url 'resume_api' %}</pre>
     <pre><strong>Default Username:</strong> {{ default_user }}</pre>
     <pre><strong>Default Resume:</strong> {{ default_resume }}</pre>
 
@@ -27,7 +27,7 @@
     <pre><strong>GET</strong> /resumes/:username</pre>
 
     <h3>Get Specific Resume for Specific User</h3>
-    <pre><strong>GET</strong> /resumes/:username/:resume_type</pre>
+    <pre><strong>GET</strong> /resumes/:username/:resume_name</pre>
 
     <p><strong>Example Success Response</strong><br>
 
@@ -180,7 +180,7 @@
   <pre><strong>GET</strong> /resumes/work/:username/</pre>
 
   <h3>Get Work history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/work/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/work/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -206,7 +206,7 @@
   <pre><strong>GET</strong> /resumes/volunteer/:username/</pre>
 
   <h3>Get Volunteer history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/volunteer/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/volunteer/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -232,7 +232,7 @@
   <pre><strong>GET</strong> /resumes/education/:username/</pre>
 
   <h3>Get Education history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/education/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/education/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -258,7 +258,7 @@
   <pre><strong>GET</strong> /resumes/awards/:username/</pre>
 
   <h3>Get Awards Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/awards/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/awards/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -279,7 +279,7 @@
   <pre><strong>GET</strong> /resumes/publications/:username/</pre>
 
   <h3>Get Publications Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/publications/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/publications/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -301,7 +301,7 @@
   <pre><strong>GET</strong> /resumes/skills/:username/</pre>
 
   <h3>Get Skills Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/skills/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/skills/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -325,7 +325,7 @@
   <pre><strong>GET</strong> /resumes/languages/:username/</pre>
 
   <h3>Get Languages Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/languages/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/languages/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -344,7 +344,7 @@
   <pre><strong>GET</strong> /resumes/interests/:username/</pre>
 
   <h3>Get Interests Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/interests/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/interests/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
   <pre>
@@ -366,7 +366,7 @@
   <pre><strong>GET</strong> /resumes/references/:username/</pre>
 
   <h3>Get References Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/references/:username/:resume_type/</pre>
+  <pre><strong>GET</strong> /resumes/references/:username/:resume_name/</pre>
 
   <p><strong>Example Success Response</strong><br>
 
