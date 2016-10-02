@@ -7,7 +7,7 @@
       body {
         font-family: 'Open Sans', sans-serif;
       }
-      p {
+      p, li {
         font-size: 12px;
         padding: 0 0 0 0;
       }
@@ -92,7 +92,7 @@
             <p><strong>{{ job.position }}</strong><br>
             <i>{{ job.company }}</i><br>
             {{ job.summary }}<br>
-            {{ job.startDate }} - {{ job.endDate }}</p>
+            {{ job.startDate }} - {% if job.endDate %}{{ job.endDate }}{% else %}Present{% endif %}</p>
           {% endif %}
         {% endfor %}
       </div>
@@ -106,7 +106,7 @@
             <p><strong>{{ job.position }}</strong><br>
             <i>{{ job.company }}</i><br>
             {{ job.summary }}<br>
-            {{ job.startDate }} - {{ job.endDate }}</p>
+            {{ job.startDate }} - {% if job.endDate %}{{ job.endDate }}{% else %}Present{% endif %}</p>
           </div>
         {% endif %}
       {% endfor %}

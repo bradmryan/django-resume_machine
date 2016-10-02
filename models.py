@@ -160,7 +160,7 @@ class Work(models.Model):
     position = models.CharField(max_length=100)
     website = models.URLField()
     startDate = models.DateField()
-    endDate = models.DateField()
+    endDate = models.DateField(null=True, blank=True)
     summary = models.TextField()
 
     class Meta:
@@ -169,8 +169,13 @@ class Work(models.Model):
     def __str__(self):
         return self.company + " - " + self.position
 
-    def as_json(self):
+    def get_work_highlights(self):
         highlights_list = []
+        for highlight in WorkHighlight.objects.filter(work=self):
+            highlights_list.append(highlight.text)
+        return highlights_list
+
+    def as_json(self):
         work_dict = {
             "position" : self.position,
             "website" : self.website,
@@ -184,10 +189,7 @@ class Work(models.Model):
         else:
             work_dict["company"] = self.company
 
-        for highlight in WorkHighlight.objects.filter(work=self):
-            highlights_list.append(highlight.text)
-
-        work_dict["highlights"] = highlights_list
+        work_dict["highlights"] = self.get_work_highlights()
 
         return work_dict
 
