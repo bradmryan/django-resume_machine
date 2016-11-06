@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET
 from resume_machine.models import Resume, User, Account
 from django.conf import settings
 
+
 import weasyprint
 
 # Create your views here.

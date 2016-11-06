@@ -211,7 +211,7 @@ class Education(models.Model):
     area = models.CharField(max_length=100)
     studyType = models.CharField(max_length=50)
     startDate = models.DateField()
-    endDate = models.DateField()
+    endDate = models.DateField(null=True, blank=True)
     gpa = models.CharField(max_length=3)
 
     class Meta:
