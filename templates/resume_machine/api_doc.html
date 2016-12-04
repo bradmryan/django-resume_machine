@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  <title>Resume API</title>
+{% endblock %}
 
 {% block head %}
-  <title>Resume API</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="{% static 'home/css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static 'home/css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <h2>Resume API</h2>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col m8">
         <p>
           JSON Resume is a community driven open source initiative to create
           JSON-based standard for resumes. More information can be found at
@@ -17,20 +24,15 @@
       </div>
     </div>
     <pre><strong>host:</strong>{{ site.domain }}{% url 'resume_api' %}</pre>
-    <pre><strong>Default Username:</strong> {{ default_user }}</pre>
-    <pre><strong>Default Resume:</strong> {{ default_resume }}</pre>
+
+    <pre><strong>example:</strong> https://www.{{ site.domain }}{% url 'resume_api' %}resume</pre>
 
     <h3>Get Defaut Resume for Default User</h3>
     <pre><strong>GET</strong> /resume</pre>
 
-    <h3>Get Default Resume for Specific User</h3>
-    <pre><strong>GET</strong> /resumes/:username</pre>
-
-    <h3>Get Specific Resume for Specific User</h3>
-    <pre><strong>GET</strong> /resumes/:username/:resume_name</pre>
-
     <p><strong>Example Success Response</strong><br>
 
+    <div class="card-panel">
       <pre>  "basics": {
       "name": <span>"string",</span>
       "label": <span>"string",</span>
@@ -123,6 +125,7 @@
       "reference": <span>"string"</span>
     }]
   </pre>
+  </div>
   </p>
 
   <h3>Get all Basic info for default</h3>
@@ -130,7 +133,7 @@
 
   <p><strong>Example Success Response</strong><br>
 
-  <pre>
+  <div class="card-panel"><pre>
     "basics": {
     "name": <span>"string",</span>
     "label": <span>"string",</span>
@@ -152,38 +155,29 @@
       "url": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get all Social Media Profiles Data for Default User</h3>
   <pre><strong>GET</strong> /resumes/profiles/</pre>
 
-  <h3>Get all Social Media Profiles Data for Specific User</h3>
-  <pre><strong>GET</strong> /resumes/profiles/:username</pre>
-
   <p><strong>Example Success Response</strong><br>
 
-  <pre>
+  <div class="card-panel"><pre>
     { "profiles": [{
         "network": <span>"string",</span>
         "username": <span>"string",</span>
         "url": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Work history Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/work/</pre>
 
-  <h3>Get Work history Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/work/:username/</pre>
-
-  <h3>Get Work history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/work/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "work": [{
         "company": <span>"string",</span>
         "position": <span>"string",</span>
@@ -196,20 +190,14 @@
         ]
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Volunteer history Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/volunteer/</pre>
 
-  <h3>Get Volunteer history Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/volunteer/:username/</pre>
-
-  <h3>Get Volunteer history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/volunteer/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "volunteer": [{
         "organization": <span>"string",</span>
         "position": <span>"string",</span>
@@ -222,20 +210,14 @@
         ]
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Education history Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/education/</pre>
 
-  <h3>Get Education history Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/education/:username/</pre>
-
-  <h3>Get Education history Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/education/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "education": [{
         "institution": <span>"string",</span>
         "area": <span>"string",</span>
@@ -248,20 +230,14 @@
         ]
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Awards Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/awards/</pre>
 
-  <h3>Get Awards Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/awards/:username/</pre>
-
-  <h3>Get Awards Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/awards/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "awards": [{
         "title": <span>"string",</span>
         "date": <span>"string:YYYY-MM-DD",</span>
@@ -269,20 +245,14 @@
         "summary": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Publications Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/publications/</pre>
 
-  <h3>Get Publications Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/publications/:username/</pre>
-
-  <h3>Get Publications Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/publications/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "publications": [{
         "name": <span>"string",</span>
         "publisher": <span>"string",</span>
@@ -291,20 +261,14 @@
         "summary": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Skills Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/skills/</pre>
 
-  <h3>Get Skills Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/skills/:username/</pre>
-
-  <h3>Get Skills Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/skills/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "skills": [{
         "name": <span>"string",</span>
         "level": <span>"string",</span>
@@ -315,39 +279,27 @@
         ]
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Languages Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/languages/</pre>
 
-  <h3>Get Languages Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/languages/:username/</pre>
-
-  <h3>Get Languages Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/languages/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "languages": [{
         "name": <span>"string",</span>
         "level": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get Interests Data for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/interests/</pre>
 
-  <h3>Get Interests Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/interests/:username/</pre>
-
-  <h3>Get Interests Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/interests/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
-  <pre>
+  <div class="card-panel"><pre>
     { "interests": [{
         "name": <span>"string",</span>
         "keywords": [
@@ -356,34 +308,28 @@
         ]
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <h3>Get References for Default User/Resume</h3>
   <pre><strong>GET</strong> /resumes/references/</pre>
 
-  <h3>Get References Data for Specific User's Default Resume</h3>
-  <pre><strong>GET</strong> /resumes/references/:username/</pre>
-
-  <h3>Get References Data for Specific User's Specific Resume</h3>
-  <pre><strong>GET</strong> /resumes/references/:username/:resume_name/</pre>
-
   <p><strong>Example Success Response</strong><br>
 
-  <pre>
+  <div class="card-panel"><pre>
     { "references": [{
         "name": <span>"string",</span>
         "reference": <span>"string"</span>
       }]
     }
-  </pre>
+  </pre></div>
   </p>
 
   <p><strong>If References are NOT published, will respond with:</strong><br>
 
-  <pre>
+  <div class="card-panel"><pre>
     {"References Not Published" : "References are available only by request"}
-  </pre>
+  </pre></div>
   </p>
 </div>
 {% endblock %}
