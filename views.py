@@ -52,126 +52,126 @@ def get_resume_json(request):
 
 
 @require_GET
-def resume_detail(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def resume_detail(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME
         )
     return JsonResponse(resume.as_json())
 
 
 @require_GET
-def basic_detail(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def basic_detail(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse(resume.basic_as_json())
 
 
 @require_GET
-def profile_list(request, username=settings.DEFAULT_USER):
+def profile_list(request):
     account = get_object_or_404(
         Account,
-        user=User.objects.get(username=username)
+        user=User.objects.get(username=settings.DEFAULT_USER)
         )
     return JsonResponse({'profiles' : account.profiles_as_json()})
 
 
 @require_GET
-def work_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def work_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'work' : resume.work_as_json()})
 
 
 @require_GET
-def volunteer_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def volunteer_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'volunteer' : resume.volunteer_as_json()})
 
 
 @require_GET
-def education_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def education_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'education' : resume.education_as_json()})
 
 
 @require_GET
-def awards_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def awards_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'awards' : resume.awards_as_json()})
 
 
 @require_GET
-def publications_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def publications_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'publications' : resume.publications_as_json()})
 
 
 @require_GET
-def skills_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def skills_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'skills' : resume.skills_as_json()})
 
 
 @require_GET
-def languages_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def languages_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'languages' : resume.languages_as_json()})
 
 
 @require_GET
-def interests_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def interests_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     resume = Resume.objects.get(
         user=user,
-        name=resume_name,
+        name=settings.DEFAULT_RESUME,
         )
     return JsonResponse({'interests' : resume.interests_as_json()})
 
 
 @require_GET
-def references_list(request, username=settings.DEFAULT_USER, resume_name=settings.DEFAULT_RESUME):
-    user = get_object_or_404(User, username=username)
+def references_list(request):
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
     account = Account.objects.get(user=user)
     if account.publishReferences:
         resume = Resume.objects.get(
             user=user,
-            name=resume_name,
+            name=settings.DEFAULT_RESUME,
             )
         return JsonResponse({'references' : resume.references_as_json()})
     else:
-        return JsonResponse({'References Not Published' : 'References are available only by request'})
+        return JsonResponse({'error' : 'References Not Published'})
 
 
 # @require_GET
