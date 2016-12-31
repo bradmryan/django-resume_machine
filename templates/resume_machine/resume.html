@@ -1,0 +1,126 @@
+{% extends 'resume_machine/resume_showcase.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+    <div>
+      <h1>{{ user.account.get_full_name }}</h1><hr>
+      <div class="indent">
+        <p>{{ user.account.city }}, {{ user.account.region}}, {{ user.account.countrycode }}</p>
+        <p>{{ user.email }}</p>
+        <p>{{ user.account.phone }}</p>
+        <p>{{ user.account.website }}</p>
+      </div>
+      <strong>Summary</strong><hr>
+      <div class="indent">
+        <p>{{ user.account.summary }}</p>
+      </div>
+      <strong>Education</strong><hr>
+      <div class="indent">
+        {% for edu in resume.education.all %}
+          <p><strong>{{ edu.institution }}</strong><br>
+          {{ edu.studyType }} in {{ edu.area }}<br>
+          {{ edu.startDate }} - {{ edu.endDate}}</p>
+        {% endfor %}
+      </div>
+      {% if resume.skills %}<strong>Skills</strong><hr>
+        <div class="indent">
+          {% for skill in resume.skills.all %}
+            <p>
+              {{ skill.name }}:
+              {% for keyword in skill.keywords.all %}
+                {% if forloop.last %}
+                  <i>{{ keyword.word }}</i>
+                {% else %}
+                  <i>{{ keyword.word }}, </i>
+                {% endif %}
+              {% endfor %}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+
+      {% for award in resume.awards.all %}
+        {% ifchanged %}
+          <strong>Awards</strong><hr>
+        {% endifchanged %}
+        <div class="indent">
+          <p>
+            <strong>{{ award.title }}</strong><br>
+            {{ award.awarder }}<br>
+            {{ award.date }}<br>
+            {{ award.summary }}
+          </p>
+        </div>
+      {% endfor %}
+
+      {% for publication in resume.publications.all %}
+        {% ifchanged %}
+          <strong>Publications</strong><hr>
+        {% endifchanged %}
+        <div class="indent">
+          <p>
+            <strong>{{ publication.name }}</strong><br>
+            {{ publication.publisher }}<br>
+            {{ publication.releaseDate }}<br>
+            {{ publication.website }}<br>
+            {{ publication.summary }}
+          </p>
+        </div>
+      {% endfor %}
+
+
+      <strong>Work History</strong><hr>
+      <div class="indent">
+        {% for job in resume.work.all %}
+          {% if not job.volunteer %}
+            <p><strong>{{ job.position }}</strong><br>
+            <i>{{ job.company }}</i><br>
+            {{ job.summary }}<br>
+            {{ job.startDate }} - {% if job.endDate %}{{ job.endDate }}{% else %}Present{% endif %}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% for job in resume.work.all %}
+        {% if job.volunteer %}
+        {% ifchanged %}
+          <strong>Volunteer History</strong><hr>
+        {% endifchanged %}
+          <div class="indent">
+            <p><strong>{{ job.position }}</strong><br>
+            <i>{{ job.company }}</i><br>
+            {{ job.summary }}<br>
+            {{ job.startDate }} - {% if job.endDate %}{{ job.endDate }}{% else %}Present{% endif %}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if resume.interests %}<strong>Interests</strong><hr>
+        <div class="indent">
+          {% for interest in resume.interests.all %}
+            <p>{{ interest.name }}:
+              {% for keyword in interest.keywords.all %}
+                {% if forloop.last %}
+                  <i>{{ keyword.word }}</i>
+                {% else %}
+                  <i>{{ keyword.word }}, </i>
+                {% endif %}
+              </p>
+              {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <strong>References</strong><hr>
+      <div class="indent">
+        {% if resume.publishReferences %}
+          {% for reference in resume.references.all %}
+            <p>{{ reference.name }} - <i>{{ reference.reference }}</i></p>
+          {% endfor %}
+        {% else %}
+          <p>For privacy, references are available only on request</p>
+        {% endif %}
+      </div>
+    </div>
+{% endblock %}

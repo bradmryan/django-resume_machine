@@ -4,13 +4,33 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.template.loader import get_template
 from django.template import RequestContext
 from django.views.decorators.http import require_GET
+from django.contrib.auth.decorators import login_required
 from resume_machine.models import Resume, User, Account
 from django.conf import settings
 
-
+import feedparser
 import weasyprint
 
 # Create your views here.
+@require_GET
+def resume_showcase(request):
+    context = {}
+    return render(request, 'resume_machine/resume_showcase.html', context)
+
+@require_GET
+def works(request):
+    context = {}
+    return render(request, 'resume_machine/works.html', context)
+
+@require_GET
+def resume_html(request):
+    resume_name = request.GET.get('resume', settings.DEFAULT_RESUME)
+    user = get_object_or_404(User, username=settings.DEFAULT_USER)
+    resume = get_object_or_404(Resume, user=user, name=resume_name)
+    context = {'user': user, 'resume':resume}
+    return render(request, 'resume_machine/resume.html', context)
+
+
 @require_GET
 def get_resume_pdf(request):
     resume_name = request.GET.get('resume', settings.DEFAULT_RESUME)
@@ -43,6 +63,14 @@ def api_document(request):
         'default_resume' : default_resume,
     }
     return render(request, 'resume_machine/api_doc.html', context)
+
+
+@login_required
+def job_search(request):
+    context = {}
+    feed = feedparser.parse('https://weworkremotely.com/categories/2-programming/jobs.rss')
+    context['feed'] = feed
+    return render(request, 'resume_machine/job_search.html', context)
 
 
 @require_GET

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  <title>Resume</title>
+{% endblock %}
+
+{% block head %}
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="{% static 'home/css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static 'home/css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <style>
+    @media (min-width: 992px) {
+      main {
+        padding-left: 300px;
+      }
+    }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+<header>
+  <ul id="nav-mobile" class="side-nav fixed">
+    <li class="logo">
+      <h3 class="center-align">Resume</h3>
+    </li>
+    <li class="bold">
+      <a href="{% url 'home' %}" class="waves-effect waves-teal">Home</a>
+    </li>
+    <li class="bold">
+      <a href="{% url 'resume_html' %}" class="waves-effect waves-teal">HTML</a>
+    </li>
+    <li class="bold">
+      <a href="{% url 'get_resume_pdf' %}" class="waves-effect waves-teal">PDF</a>
+    </li>
+    <li class="bold">
+      <a href="{% url 'resume_api' %}" class="waves-effect waves-teal">JSON</a>
+    </li>
+    <li class="bold">
+      <a href="{% url 'works' %}" class="waves-effect waves-teal">Works</a>
+    </li>
+  </ul>
+  <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="material-icons">menu</i></a>
+</header>
+<main>
+  <div class="container">
+    {% block innercontent %}
+    {% endblock %}
+  </div>
+</main>
+  {% block js %}
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="{% static 'home/js/materialize.min.js' %}"></script>
+    <script>
+      $( document ).ready(function() {
+        $( ".button-collapse" ).sideNav();
+      });
+    </script>
+  {% endblock %}
+
+{% endblock %}
