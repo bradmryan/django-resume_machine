@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 
 # Create your models here.
 class Image(models.Model):
@@ -17,6 +18,7 @@ class Image(models.Model):
 
 class Account(models.Model):
     user = models.OneToOneField(User)
+    site = models.OneToOneField(Site)
     firstname = models.CharField(max_length=255)
     middleinitial = models.CharField(max_length=5)
     lastname = models.CharField(max_length=255)
