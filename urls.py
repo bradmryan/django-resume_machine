@@ -2,6 +2,7 @@ from django.conf.urls import url
 from resume_machine import views
 
 urlpatterns = [
+    url(r'^$', views.resume_html, name='resume_showcase'),
     url(r'^api/$', views.api_document, name='resume_api'),
     url(r'^pdf/$', views.get_resume_pdf, name='get_resume_pdf'),
     url(r'^json/$', views.get_resume_json, name='get_resume_json'),
@@ -20,5 +21,5 @@ urlpatterns = [
     url(r'^api/interests/$', views.interests_list),
     url(r'^api/references/$', views.references_list),
     url(r'^job_search/$', views.job_search, name='job_search'),
-    url(r'^$', views.resume_showcase, name='resume_showcase'),
+    #url(r'^$', views.resume_showcase, name='resume_showcase'),
 ]

@@ -127,16 +127,15 @@
         </div>
       {% endif %}
 
-      <strong>References</strong><hr>
-      <div class="indent">
-        {% if resume.publishReferences %}
+      {% if resume.publishReferences %}
+        <strong>References</strong><hr>
+        <div class="indent">
           {% for reference in resume.references.all %}
             <p>{{ reference.name }} - <i>{{ reference.reference }}</i></p>
           {% endfor %}
-        {% else %}
-          <p>For privacy, references are available only on request</p>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
+
     </div>
   </body>
 </html>
