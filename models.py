@@ -16,112 +16,6 @@ class Image(models.Model):
         return self.name
 
 
-class Account(models.Model):
-    user = models.OneToOneField(User)
-    site = models.OneToOneField(Site)
-    firstname = models.CharField(max_length=255)
-    middleinitial = models.CharField(max_length=5)
-    lastname = models.CharField(max_length=255)
-    label = models.CharField(max_length=255)
-    picture = models.ForeignKey(Image, null=True)
-    phone = models.CharField(max_length=14)
-    website = models.URLField()
-    summary = models.TextField()
-    address = models.CharField(max_length=255, null=True)
-    postalcode = models.CharField(max_length=9, null=True)
-    city = models.CharField(max_length=255, null=True)
-    countrycode = models.CharField(max_length=2, null=True)
-    region = models.CharField(max_length=255, null=True)
-    publishReferences = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.user.email
-
-    def get_full_name(self):
-        return ' '.join([self.firstname, self.middleinitial, self.lastname]).title()
-
-    def location_as_json(self):
-        return {
-            "address" : self.address,
-            "postalCode" : self.postalcode,
-            "city" : self.city,
-            "countryCode" : self.countrycode,
-            "region" : self.region,
-        }
-
-    def profiles_as_json(self):
-        profiles_list = []
-        for profile in Profile.objects.filter(user=self.user):
-            profiles_list.append(profile.as_json())
-        return profiles_list
-
-
-    def as_json(self):
-        return {
-            "name" : self.get_full_name(),
-            "label" : self.label,
-            "picture" : self.picture.image,
-            "email" : self.user.email,
-            "phone" : self.phone,
-            "website" : self.website,
-            "summary" : self. summary,
-            "location" : self.location_as_json(),
-            "profiles" : self.profiles_as_json(),
-        }
-
-    def as_resume_json(self):
-        resume_dict = {}
-        work_list = []
-        volunteer_list = []
-        education_list = []
-        awards_list = []
-        publications_list = []
-        skills_list = []
-        language_list = []
-        interests_list = []
-        references_list = []
-
-        for work in Work.objects.filter(user=self.user):
-            if work.volunteer:
-                volunteer_list.append(work.as_json())
-            else:
-                work_list.append(work.as_json())
-
-        for education in Education.objects.filter(user=self.user):
-            education_list.append(education.as_json())
-
-        for award in Award.objects.filter(user=self.user):
-            awards_list.append(award.as_json())
-
-        for publication in Publication.objects.filter(user=self.user):
-            publications_list.append(publication.as_json())
-
-        for skill in Skill.objects.filter(user=self.user):
-            skills_list.append(skill.as_json())
-
-        for language in Language.objects.filter(user=self.user):
-            language_list.append(language.as_json())
-
-        for interest in Interest.objects.filter(user=self.user):
-            interests_list.append(interest.as_json())
-
-        for reference in Reference.objects.filter(user=self.user):
-            references_list.append(reference.as_json())
-
-        return {
-            "basics" : self.as_json(),
-            "work" : work_list,
-            "volunteer" : volunteer_list,
-            "education" : education_list,
-            "awards" : awards_list,
-            "publications" : publications_list,
-            "skills" : skills_list,
-            "languages" : language_list,
-            "interests" : interests_list,
-            "references" : references_list,
-        }
-
-
 class Profile(models.Model):
     user = models.ForeignKey(User)
 
@@ -401,6 +295,9 @@ class Resume(models.Model):
     class Meta:
         unique_together = ('user', 'name')
 
+    def __str__(self):
+        return self.name
+
     def basic_as_json(self):
         account = Account.objects.get(user=self.user)
         return account.as_json()
@@ -473,4 +370,111 @@ class Resume(models.Model):
             "languages" : self.languages_as_json(),
             "interests" : self.interests_as_json(),
             "references" : self.references_as_json(),
+        }
+
+
+class Account(models.Model):
+    user = models.OneToOneField(User)
+    site = models.OneToOneField(Site)
+    defaultResume = models.ForeignKey(Resume, null=True)
+    firstname = models.CharField(max_length=255)
+    middleinitial = models.CharField(max_length=5)
+    lastname = models.CharField(max_length=255)
+    label = models.CharField(max_length=255)
+    picture = models.ForeignKey(Image, null=True)
+    phone = models.CharField(max_length=14)
+    website = models.URLField()
+    summary = models.TextField()
+    address = models.CharField(max_length=255, null=True)
+    postalcode = models.CharField(max_length=9, null=True)
+    city = models.CharField(max_length=255, null=True)
+    countrycode = models.CharField(max_length=2, null=True)
+    region = models.CharField(max_length=255, null=True)
+    publishReferences = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.email
+
+    def get_full_name(self):
+        return ' '.join([self.firstname, self.middleinitial, self.lastname]).title()
+
+    def location_as_json(self):
+        return {
+            "address" : self.address,
+            "postalCode" : self.postalcode,
+            "city" : self.city,
+            "countryCode" : self.countrycode,
+            "region" : self.region,
+        }
+
+    def profiles_as_json(self):
+        profiles_list = []
+        for profile in Profile.objects.filter(user=self.user):
+            profiles_list.append(profile.as_json())
+        return profiles_list
+
+
+    def as_json(self):
+        return {
+            "name" : self.get_full_name(),
+            "label" : self.label,
+            "picture" : self.picture.image,
+            "email" : self.user.email,
+            "phone" : self.phone,
+            "website" : self.website,
+            "summary" : self. summary,
+            "location" : self.location_as_json(),
+            "profiles" : self.profiles_as_json(),
+        }
+
+    def as_resume_json(self):
+        resume_dict = {}
+        work_list = []
+        volunteer_list = []
+        education_list = []
+        awards_list = []
+        publications_list = []
+        skills_list = []
+        language_list = []
+        interests_list = []
+        references_list = []
+
+        for work in Work.objects.filter(user=self.user):
+            if work.volunteer:
+                volunteer_list.append(work.as_json())
+            else:
+                work_list.append(work.as_json())
+
+        for education in Education.objects.filter(user=self.user):
+            education_list.append(education.as_json())
+
+        for award in Award.objects.filter(user=self.user):
+            awards_list.append(award.as_json())
+
+        for publication in Publication.objects.filter(user=self.user):
+            publications_list.append(publication.as_json())
+
+        for skill in Skill.objects.filter(user=self.user):
+            skills_list.append(skill.as_json())
+
+        for language in Language.objects.filter(user=self.user):
+            language_list.append(language.as_json())
+
+        for interest in Interest.objects.filter(user=self.user):
+            interests_list.append(interest.as_json())
+
+        for reference in Reference.objects.filter(user=self.user):
+            references_list.append(reference.as_json())
+
+        return {
+            "basics" : self.as_json(),
+            "work" : work_list,
+            "volunteer" : volunteer_list,
+            "education" : education_list,
+            "awards" : awards_list,
+            "publications" : publications_list,
+            "skills" : skills_list,
+            "languages" : language_list,
+            "interests" : interests_list,
+            "references" : references_list,
         }

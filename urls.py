@@ -21,5 +21,13 @@ urlpatterns = [
     url(r'^api/interests/$', views.interests_list),
     url(r'^api/references/$', views.references_list),
     url(r'^job_search/$', views.job_search, name='job_search'),
+    url(r'^account/$', views.account_form, name='account_form'),
+    url(r'^account/update_name/$', views.update_name, name='update_name'),
+    url(r'^account/update_label/$', views.update_label, name='update_label'),
+    url(r'^account/update_summary/$', views.update_summary, name='update_summary'),
+    url(r'^account/update_website/$', views.update_website, name='update_website'),
+    url(r'^account/update_phone/$', views.update_phone, name='update_phone'),
+    url(r'^account/update_address/$', views.update_address, name='update_address'),
+    url(r'^account/update_location/$', views.update_location, name='update_location')
     #url(r'^$', views.resume_showcase, name='resume_showcase'),
 ]

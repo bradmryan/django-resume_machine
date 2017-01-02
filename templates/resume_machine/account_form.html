@@ -1,0 +1,324 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+  <h1> Account </h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Name -->
+    <div class="row">
+      <i id="name-field-icon" class="material-icons small"></i>
+      <div class="input-field col s3">
+        <input value="{{ account.firstname|title }}" id="first_name" class="js-name-field" type="text">
+        <label class="active" for="first_name">First Name</label>
+      </div>
+      <div class="input-field col s3">
+        <input value="{{ account.middleinitial|title }}" id="middle_initial" class="js-name-field" type="text"  >
+        <label class="active" for="middle_initial">Middle Initial</label>
+      </div>
+      <div class="input-field col s3">
+        <input value="{{ account.lastname|title }}" id="last_name" class="js-name-field" type="text"  >
+        <label class="active" for="last_name">Last Name</label>
+      </div>
+    </div>
+
+    <!-- Label -->
+    <div class="row">
+      <i id="label-field-icon" class="material-icons small"></i>
+      <div class="input-field col s9">
+        <input value="{{ account.label|title }}" id="label" type="text"  >
+        <label class="active" for="label">Label</label>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="row">
+      <i id="summary-field-icon" class="material-icons small"></i>
+      <div class="input-field col s9">
+        <textarea id="summary" class="materialize-textarea"></textarea>
+        <label class="active" for="summary">Summary</label>
+      </div>
+    </div>
+
+    <!-- Website -->
+    <div class="row">
+      <i id="website-field-icon" class="material-icons small"></i>
+      <div class="input-field col s9">
+        <input value="{{ account.website }}" id="website" type="text"  >
+        <label class="active" for="website">Website</label>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="row">
+      <i id="phone-field-icon" class="material-icons small"></i>
+      <div class="input-field col s3">
+        <input value="{{ account.phone }}" id="phone" type="tel"  >
+        <label class="active" for="phone">Phone</label>
+      </div>
+      <div class="input-field col s6">
+        <input value="{{ account.user.email }}" id="email" type="email"   disabled>
+        <label class="active" for="email">Email</label>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="row">
+      <i id="address-field-icon" class="material-icons small"></i>
+      <div class="input-field col s9">
+        <input value="{{ account.address|title }}" id="address" type="text"  >
+        <label class="active" for="address">Address</label>
+      </div>
+    </div>
+    <div class="row">
+      <i id="location-field-icon" class="material-icons small"></i>
+      <div class="input-field col s2">
+        <input value="{{ account.postalcode|upper }}" id="postalcode" class="js-location-field" type="text"  >
+        <label class="active" for="postalcode">Postal Code</label>
+      </div>
+      <div class="input-field col s3">
+        <input value="{{ account.city }}" id="city" class="js-location-field" type="text"  >
+        <label class="active" for="city">City</label>
+      </div>
+      <div class="input-field col s2">
+        <input value="{{ account.countrycode|upper }}" id="country" class="js-location-field" type="text"  >
+        <label class="active" for="country">Country</label>
+      </div>
+      <div class="input-field col s2">
+        <input value="{{ account.region|upper }}" id="region" class="js-location-field" type="text"  >
+        <label class="active" for="region">Region</label>
+      </div>
+    </div>
+
+    <!-- Default Resume -->
+
+    {% if resumes %}
+      <div class="row">
+        <div class="input-field col s9">
+          <select>
+            {% for resume in resumes %}
+              {% if resume is account.defaultResume %}
+                <option value="{{ resume.pk }}" selected>{{ resume }}</option>
+              {% else %}
+                <option value="{{ resume.pk }}">{{ resume}}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <label>Default Resume</label>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="switch">
+      <label>
+        Publish References<br>
+
+        No
+        <input type="checkbox"
+          {% if account.publishReferences %}
+            checked
+          {% endif %}
+        >
+        <span class="lever"></span>
+        Yes
+      </label>
+    </div>
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+<script>
+  //Materialize
+  $( document ).ready(function() {
+    $('#summary').val('{{ account.summary }}');
+    $('#summary').trigger('autoresize');
+    $('select').material_select();
+    $('.collapsible').collapsible();
+  });
+
+
+  //Update Name
+  $(".js-name-field").change(function () {
+    var firstname = $("#first_name").val();
+    var middleinitial = $("#middle_initial").val();
+    var lastname = $("#last_name").val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_name" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'first_name': firstname,
+        'middle_initial': middleinitial,
+        'last_name': lastname
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#name-field-icon").css("color", "green");
+          $("#name-field-icon").html("done")
+        } else {
+          $("#name-field-icon").css("color", "red");
+          $("#name-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+
+  //Update Label
+  $("#label").change(function () {
+    var label = $(this).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_label" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'label': label,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#label-field-icon").css("color", "green");
+          $("#label-field-icon").html("done")
+        } else {
+          $("#label-field-icon").css("color", "red");
+          $("#label-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update Summary
+  $("#summary").change(function () {
+    var summary = $(this).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_summary" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'summary': summary,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#summary-field-icon").css("color", "green");
+          $("#summary-field-icon").html("done")
+        } else {
+          $("#summary-field-icon").css("color", "red");
+          $("#summary-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update Website
+  $("#website").change(function () {
+    var website = $(this).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_website" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'website': website,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#website-field-icon").css("color", "green");
+          $("#website-field-icon").html("done")
+        } else {
+          $("#website-field-icon").css("color", "red");
+          $("#website-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update phone
+  $("#phone").change(function () {
+    var phone = $(this).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_phone" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'phone': phone,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#phone-field-icon").css("color", "green");
+          $("#phone-field-icon").html("done")
+        } else {
+          $("#phone-field-icon").css("color", "red");
+          $("#phone-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update phone
+  $("#address").change(function () {
+    var address = $(this).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_address" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'address': address,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#address-field-icon").css("color", "green");
+          $("#address-field-icon").html("done")
+        } else {
+          $("#address-field-icon").css("color", "red");
+          $("#address-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update location
+  $(".js-location-field").change(function () {
+    var postalcode = $("#postalcode").val();
+    var city = $("#city").val();
+    var country = $("#country").val();
+    var region = $("#region").val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_location" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'postalcode': postalcode,
+        'city': city,
+        'country': country,
+        'region': region
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#location-field-icon").css("color", "green");
+          $("#location-field-icon").html("done")
+        } else {
+          $("#location-field-icon").css("color", "red");
+          $("#location-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+</script>
+{% endblock %}
