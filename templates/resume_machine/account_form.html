@@ -96,10 +96,11 @@
 
     {% if resumes %}
       <div class="row">
-        <div class="input-field col s9">
-          <select>
+        <i id="defaultresume-field-icon" class="material-icons small"></i>
+        <div class="input-field col s6">
+          <select id="defaultResume">
             {% for resume in resumes %}
-              {% if resume is account.defaultResume %}
+              {% if resume.pk == account.defaultResume.pk %}
                 <option value="{{ resume.pk }}" selected>{{ resume }}</option>
               {% else %}
                 <option value="{{ resume.pk }}">{{ resume}}</option>
@@ -108,7 +109,14 @@
           </select>
           <label>Default Resume</label>
         </div>
+        <div class="col s3">
+          <a class="waves-effect waves-light btn">New Resume</a>
+        </div>
       </div>
+    {% else %}
+    <div class="row">
+      <a class="waves-effect waves-light btn">New Resume</a>
+    </div>
     {% endif %}
 
     <div class="switch">
@@ -116,13 +124,14 @@
         Publish References<br>
 
         No
-        <input type="checkbox"
+        <input type="checkbox" id="publishReferences"
           {% if account.publishReferences %}
             checked
           {% endif %}
         >
         <span class="lever"></span>
         Yes
+        <i id="publishreferences-field-icon" class="material-icons small"></i>
       </label>
     </div>
 
@@ -315,6 +324,60 @@
         } else {
           $("#location-field-icon").css("color", "red");
           $("#location-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update Default Resume
+  $("#defaultResume").change(function () {
+
+    var defaultResume = this.value;
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_defaultresume" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'defaultResume': defaultResume,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#defaultresume-field-icon").css("color", "green");
+          $("#defaultresume-field-icon").html("done")
+        } else {
+          $("#defaultresume-field-icon").css("color", "red");
+          $("#defaultresume-field-icon").html("error")
+        }
+      }
+    })
+  });
+
+  //Update publishReferences
+  $("#publishReferences").change(function () {
+
+    if (this.checked) {
+      var publishReferences = true;
+    } else {
+      var publishReferences = false;
+    }
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_publishreferences" %}',
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'publishReferences': publishReferences,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#publishreferences-field-icon").css("color", "green");
+          $("#publishreferences-field-icon").html("done")
+        } else {
+          $("#publishreferences-field-icon").css("color", "red");
+          $("#publishreferences-field-icon").html("error")
         }
       }
     })

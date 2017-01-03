@@ -313,3 +313,34 @@ def update_location(request):
     except:
         pass
     return JsonResponse(data)
+
+
+@require_POST
+def update_publishreferences(request):
+    data = {}
+    try:
+        account = get_object_or_404(Account, user=request.user)
+        publishReferences = request.POST.get('publishReferences', '')
+        if publishReferences.lower() == 'true':
+            account.publishReferences = True
+        elif publishReferences.lower() == 'false':
+            account.publishReferences = False
+        account.save(update_fields=['publishReferences'])
+        data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def update_defaultresume(request):
+    data = {}
+    try:
+        account = get_object_or_404(Account, user=request.user)
+        defaultResume = request.POST.get('defaultResume', '')
+        account.defaultResume = get_object_or_404(Resume, pk=defaultResume)
+        account.save(update_fields=['defaultResume'])
+        data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)

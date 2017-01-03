@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^account/update_website/$', views.update_website, name='update_website'),
     url(r'^account/update_phone/$', views.update_phone, name='update_phone'),
     url(r'^account/update_address/$', views.update_address, name='update_address'),
-    url(r'^account/update_location/$', views.update_location, name='update_location')
+    url(r'^account/update_location/$', views.update_location, name='update_location'),
+    url(r'^account/update_publishreferences/$', views.update_publishreferences, name='update_publishreferences'),
+    url(r'^account/update_defaultresume/$', views.update_defaultresume, name='update_defaultresume')
     #url(r'^$', views.resume_showcase, name='resume_showcase'),
 ]
