@@ -97,7 +97,7 @@
     {% if resumes %}
       <div class="row">
         <i id="defaultresume-field-icon" class="material-icons small"></i>
-        <div class="input-field col s6">
+        <div class="input-field col s5">
           <select id="defaultResume">
             {% for resume in resumes %}
               {% if resume.pk == account.defaultResume.pk %}
@@ -107,10 +107,13 @@
               {% endif %}
             {% endfor %}
           </select>
-          <label>Default Resume</label>
+          <label>Published Resume</label>
         </div>
-        <div class="col s3">
-          <a class="waves-effect waves-light btn">New Resume</a>
+        <div class="col s2 center-align">
+          <a class="waves-effect waves-light btn ">Edit</a>
+        </div>
+        <div class="col s2 center-align">
+          <a class="waves-effect waves-light btn">New</a>
         </div>
       </div>
     {% else %}
@@ -135,7 +138,68 @@
       </label>
     </div>
 
+    <br><br>
+
+    <h4>Languages</h4>
+
+    <div id="language_row">
+      {% for language in languages %}
+        <div id="language_row_pk{{ language.pk }}" class="row">
+          <i id="language-field-icon-{{ language.pk }}" class="material-icons small"></i>
+          <div class="input-field col s4">
+            <input value="{{ language.name }}" id="language_name_pk{{ language.pk }}" class="js-language-field" type="text">
+            <label class="active" for="language_name_pk{{ language.pk }}">Name</label>
+          </div>
+          <div class="input-field col s4">
+            <input value="{{ language.level }}" id="language_level_pk{{ language.pk }}" class="js-language-field" type="text">
+            <label class="active" for="language_level_pk{{ language.pk }}">Level</label>
+          </div>
+          <div class="input-field col s1 center-align">
+            <a id="delete_language_pk{{ language.pk }}" class="delete_language btn"><i class="material-icons">delete</i></a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="new_language_row" class="row">
+      <i id="language-field-icon-new" class="material-icons small"></i>
+      <div class="input-field col s4">
+        <input id="language_name_new" type="text">
+        <label class="active" for="language_name_new">Name</label>
+      </div>
+      <div class="input-field col s4">
+        <input id="language_level_new" type="text">
+        <label class="active" for="language_level_new">Level</label>
+      </div>
+      <div class="input-field col s1 center-align">
+        <a id="new_language" class="btn"><i class="material-icons">add</i></a>
+      </div>
+    </div>
+
+    <h4>References</h4>
+
+    {% for reference in references %}
+
+      <div id="reference_row_pk{{ reference.pk }}" class="row">
+        <i id="reference-field-icon-{{ reference.pk }}" class="material-icons small"></i>
+        <div class="input-field col s4">
+          <input value="{{ reference.name }}" id="reference_name_pk{{ reference.pk }}" class="js-reference-field" type="text">
+          <label class="active" for="reference_name_pk{{ reference.pk }}">Name</label>
+        </div>
+        <div class="input-field col s4">
+          <input value="{{ reference.reference }}" id="reference_reference_pk{{ reference.pk }}" class="js-reference-field" type="text">
+          <label class="active" for="reference_reference_pk{{ reference.pk }}">Reference</label>
+        </div>
+        <div class="input-field col s1 center-align">
+          <a id="delete_reference_pk{{ reference.pk }}" class="delete_reference btn"><i class="material-icons">delete</i></a>
+        </div>
+      </div>
+
+    {% endfor %}
+
+
   </form>
+
 
 {% endblock %}
 
@@ -149,6 +213,72 @@
     $('.collapsible').collapsible();
   });
 
+
+  //Delete Functions
+  var delete_language = function() {
+    var language_id = $( this ).attr("id");
+    var lid_pos = language_id.indexOf("pk");
+    var language_pk = language_id.substr(lid_pos + 2);
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "delete_language" 0000 %}'.replace(0000, language_pk),
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $('#language_row_pk' + data.language_pk).remove();
+        } else {
+          $("#delete_language_pk" + language_pk).css("color", "red");
+        }
+      }
+    })
+
+  }
+
+
+  $('#new_language').click(function() {
+
+    var name = $('#language_name_new').val();
+    var level = $('#language_level_new').val();
+
+    if (name && level) {
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "create_language" %}',
+        data:{
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+          'name': name,
+          'level': level
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+              $('#new_language_row').clone().prop('id', 'language_row_pk' + data.language_pk).appendTo("#language_row");
+              $('#language_level_new').attr('id', 'language_level_pk' + data.language_pk);
+              $('#language_name_new').attr('id', 'language_name_pk' + data.language_pk);
+              $('#new_language').attr('id', 'delete_language_pk' + data.language_pk);
+              $('#language_name_new').val("");
+              $('#language_level_new').val("");
+              $('#delete_language_pk' + data.language_pk).addClass('delete_language');
+              $('#delete_language_pk' + data.language_pk).find('i').html('delete');
+              $('#delete_language_pk' + data.language_pk).click(delete_language);
+          } else {
+            $("#new_language").css("color", "red");
+          }
+        }
+      })
+
+    }
+  });
+
+
+  $('.delete_language').click(delete_language);
+
+  //------------------------- AJAX --------------------
 
   //Update Name
   $(".js-name-field").change(function () {
@@ -381,6 +511,37 @@
         }
       }
     })
+  });
+
+  //Update Language
+  $(".js-language-field").change(function () {
+    var language_id = $( this ).attr("id");
+    var lid_pos = language_id.indexOf("pk");
+    var language_pk = language_id.substr(lid_pos + 2);
+
+    var name = $("#language_name_pk" + language_pk).val();
+    var level = $("#language_level_pk" + language_pk).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_language" 9999 %}'.replace(9999, language_pk),
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'name': name,
+        'level': level,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#language-field-icon-" + language_pk).css("color", "green");
+          $("#language-field-icon-" + language_pk).html("done");
+        } else {
+          $("#language-field-icon-" + language_pk).css("color", "red");
+          $("#language-field-icon-" + language_pk).html("error");
+        }
+      }
+    })
+
   });
 
 </script>

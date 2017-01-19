@@ -71,6 +71,9 @@ class Work(models.Model):
             highlights_list.append(highlight.text)
         return highlights_list
 
+    def get_highlights(self):
+        return self.workhighlight_set.all()
+
     def as_json(self):
         work_dict = {
             "position" : self.position,
@@ -88,7 +91,6 @@ class Work(models.Model):
         work_dict["highlights"] = self.get_work_highlights()
 
         return work_dict
-
 
 
 class WorkHighlight(models.Model):
@@ -115,6 +117,9 @@ class Education(models.Model):
 
     def __str__(self):
         return self.area + " - " + self.institution
+
+    def get_courses(self):
+        return self.course_set.all()
 
     def as_json(self):
         course_list = []

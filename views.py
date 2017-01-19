@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.template import RequestContext
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
-from resume_machine.models import Resume, Account
+from resume_machine.models import Resume, Account, Profile, Skill, Award, Publication, Interest, Language, Reference
 from django.contrib.sites.models import Site
 
 
@@ -14,17 +14,98 @@ import weasyprint
 
 # Create your views here.
 @login_required
-def account_form(request):
+def update_account_form(request):
     account = get_object_or_404(
         Account,
         user=request.user
     )
-    resumes = Resume.objects.filter(user=account.user)
+    resumes = Resume.objects.filter(user=request.user)
+    languages = Language.objects.filter(user=request.user)
+    references = Reference.objects.filter(user=request.user)
     context = {
         'account' : account,
-        'resumes' : resumes
+        'resumes' : resumes,
+        'languages' : languages,
+        'references' : references
     }
-    return render(request, 'resume_machine/account_form.html', context)
+    return render(request, 'resume_machine/update_account_form.html', context)
+
+@login_required
+def resume_create(request):
+    account = get_object_or_404(
+        Account,
+        user=request.user
+    )
+    context = { 'account' : account }
+    return render(request, 'resume_machine/resume_form.html', context)
+
+
+@login_required
+def update_profile_form(request, resume_pk=None):
+    account = get_object_or_404(
+        Account,
+        user=request.user
+    )
+    context = { 'account' : account }
+    return render(request, 'resume_machine/update_profile_form.html', context)
+
+
+@login_required
+def update_work_form(request, resume_pk=None):
+    if resume_pk:
+        resume = get_object_or_404(
+            Resume,
+            pk=resume_pk,
+            user=request.user
+        )
+        work_history = resume.work.all()
+    else:
+        account = get_object_or_404(
+            Account,
+            user=request.user
+        )
+        work_history = account.defaultResume.work.all()
+    context = { 'jobs' : work_history }
+    return render(request, 'resume_machine/update_work_form.html', context)
+
+
+@login_required
+def update_education_form(request, resume_pk=None):
+    account = get_object_or_404(
+        Account,
+        user=request.user
+    )
+    context = { 'education' : account.defaultResume.education.all() }
+    return render(request, 'resume_machine/update_education_form.html', context)
+
+
+@login_required
+def update_skills_form(request):
+    skills = Skill.objects.filter(user=request.user)
+    context = { 'skills' : skills }
+    return render(request, 'resume_machine/update_skills_form.html', context)
+
+
+@login_required
+def update_awards_form(request):
+    awards = Award.objects.filter(user=request.user)
+    context = { 'awards' : awards }
+    return render(request, 'resume_machine/update_awards_form.html', context)
+
+
+@login_required
+def update_publications_form(request):
+    publications = Publication.objects.filter(user=request.user)
+    context = { 'publications' : publications }
+    return render(request, 'resume_machine/update_publications_form.html', context)
+
+
+@login_required
+def update_interests_form(request):
+    interests = Interest.objects.filter(user=request.user)
+    context = { 'interests' : interests }
+    return render(request, 'resume_machine/update_interests_form.html', context)
+
 
 @require_GET
 def works(request):
@@ -208,6 +289,27 @@ def references_list(request):
 
 
 @require_POST
+def create_language(request):
+    data = {}
+    try:
+        name = request.POST.get('name', '')
+        level = request.POST.get('level', '')
+        if name and level:
+            language = Language(
+                user = request.user,
+                name = name,
+                level = level
+            )
+            language.save()
+            data = { 'success' : True, 'language_pk' : language.pk }
+        else:
+            data = { 'success' : False }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
 def update_name(request):
     data = { ' message' : 'fail' }
     try:
@@ -341,6 +443,58 @@ def update_defaultresume(request):
         account.defaultResume = get_object_or_404(Resume, pk=defaultResume)
         account.save(update_fields=['defaultResume'])
         data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def update_profile(request, profile_id):
+    data = {}
+    try:
+        account = get_object_or_404(Account, user=request.user)
+        profile = get_object_or_404(Profile, pk=profile_id)
+        if profile in account.defaultResume.profiles.all():
+            username = request.POST.get('username', '')
+            profile.username = username
+            if profile.network == "TW":
+                profile.url = "https://twitter.com/" + username
+            elif profile.network == "FB":
+                profile.url = "https://www.facebook.com/" + username
+            elif profile.network == "LI":
+                profile.url = "https://ca.linkedin.com/in/" + username
+            elif profile.network == "GH":
+                profile.url = "https://github.com/" + username
+            profile.save(update_fields=['username', 'url'])
+            data = { 'success' : True, 'url' : profile.url }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def update_language(request, language_pk):
+    data = {}
+    try:
+        language = get_object_or_404(Language, pk=language_pk, user=request.user)
+        name = request.POST.get('name', '')
+        level = request.POST.get('level', '')
+        language.name = name
+        language.level = level
+        language.save(update_fields=['name', 'level'])
+        data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def delete_language(request, language_pk):
+    data = {}
+    try:
+        language = get_object_or_404(Language, pk=language_pk, user=request.user)
+        count = language.delete()
+        data = { 'success': True, 'count' : count, 'language_pk' : language_pk }
     except:
         pass
     return JsonResponse(data)

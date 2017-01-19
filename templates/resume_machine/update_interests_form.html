@@ -1,0 +1,56 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Interests</h3>
+
+    {% for interest in interests %}
+
+      <div class="row">
+        <i id="interest-field-icon-{{ skill.pk }}" class="material-icons small"></i>
+        <div class="input-field col s5">
+          <input value="{{ interest.name }}" id="interest_pk{{ skill.pk }}" class="js-interest-field" type="text" >
+          <label class="active" for="interest_pk{{ skill.pk }}">Interest</label>
+        </div>
+      </div>
+
+      <p>Keywords</p>
+
+      <div id="interest_keyword_pk{{ interest.pk }}" class="chips"></div>
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+    {% for interest in interests %}
+      $('#interest_keyword_pk{{ interest.pk }}').material_chip({
+        data: [
+          {% for keyword in interest.keywords.all %}
+            { tag: '{{ keyword.word }}',},
+          {% endfor %}
+        ],
+        secondaryPlaceholder: '+Tag',
+      });
+    {% endfor %}
+
+    $('.chips').on('chip.add', function(e, chip){
+      // you have the added chip here
+    });
+
+    $('.chips').on('chip.delete', function(e, chip){
+      // you have the deleted chip here
+    });
+
+  </script>
+{% endblock %}

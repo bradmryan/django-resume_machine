@@ -1,0 +1,89 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Publications</h3>
+
+    {% for publication in publications %}
+
+      <div class="row">
+        <div class="col s10">
+          <div class="card horizontal">
+            <div class="card-image">
+              <img src="http://lorempixel.com/100/190/nature/6">
+            </div>
+            <div class="card-stacked">
+              <div class="card-content">
+                <h4>{{ publication.name }}</h4>
+                <p>By {{ publication.publisher }} on {{ publication.releaseDate }}</p>
+              </div>
+              <div class="card-action">
+                <a href="{{ publication.website }}">{{ publication.website }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="publication-field-icon-{{ publication.pk }}" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <input value="{{ publication.name }}" id="publication_name_pk{{ publication.pk }}" class="js-publication-field" type="text" >
+          <label class="active" for="publication_name_pk{{ publication.pk }}">Name</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="publication-date-field-icon-{{ publication.pk }}" class="material-icons small"></i>
+        <div class="input-field col s6">
+          <input value="{{ publication.publisher }}" id="publication_publisher_pk{{ publication.pk }}" class="js-publication-date-field" type="text" >
+          <label class="active" for="publication_publisher_pk{{ publication.pk }}">Publisher</label>
+        </div>
+        <div class="input-field col s4">
+          <input value="{{ publication.releaseDate }}" id="publication_publisher_pk{{ publication.pk }}" class="js-publication-date-field" type="text" >
+          <label class="active" for="publication_publisher_pk{{ publication.pk }}">Release Date</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="publication-website-field-icon-{{ publication.pk }}" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <input value="{{ publication.website }}" id="publication_website_pk{{ publication.pk }}" class="js-publication-website-field" type="text" >
+          <label class="active" for="publication_website_pk{{ work.pk }}">Website</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="publication-summary-field-icon" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <textarea id="publication_summary_pk{{ publication.pk }}" class="materialize-textarea"></textarea>
+          <label class="active" for="publication_summary_pk{{ work.pk }}">Summary</label>
+        </div>
+      </div>
+
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+    $( document ).ready(function() {
+
+      {% for publication in publications %}
+        $('#publication_summary_pk{{ publication.pk }}').val('{{ publication.summary }}');
+        $('#publication_summary_pk{{ publication.pk }}').trigger('autoresize');
+      {% endfor %}
+
+    });
+  </script>
+{% endblock %}

@@ -21,45 +21,74 @@
 {% endblock %}
 
 {% block content %}
-<header>
-  <ul id="nav-mobile" class="side-nav fixed">
-    <li class="logo">
-      <h3 class="center-align">Resume</h3>
-    </li>
-    <li class="bold">
-      <a href="{% url 'home' %}" class="waves-effect waves-teal">Home</a>
-    </li>
-    <li class="bold">
-      <a href="{% url 'resume_html' %}" class="waves-effect waves-teal">HTML</a>
-    </li>
-    <li class="bold">
-      <a href="{% url 'get_resume_pdf' %}" class="waves-effect waves-teal">PDF</a>
-    </li>
-    <li class="bold">
-      <a href="{% url 'resume_api' %}" class="waves-effect waves-teal">JSON</a>
-    </li>
-    <li class="bold">
-      <a href="{% url 'works' %}" class="waves-effect waves-teal">Portfolio</a>
-    </li>
-  </ul>
-  <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="material-icons">menu</i></a>
-</header>
-<main>
-  <div class="container">
-    {% block innercontent %}
-    {% endblock %}
-  </div>
-</main>
-  {% block js %}
-    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="{% static 'home/js/materialize.min.js' %}"></script>
-    <script>
-      $( document ).ready(function() {
-        $( ".button-collapse" ).sideNav();
-      });
-    </script>
-    {% block more-js %}
-    {% endblock %}
+  <header>
+    <ul id="nav-mobile" class="side-nav fixed">
+      <li class="logo">
+        <h3 class="center-align">Resume</h3>
+      </li>
+      <li class="bold">
+        <a href="{% url 'home' %}" class="waves-effect waves-teal">Home</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'resume_html' %}" class="waves-effect waves-teal">HTML</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'get_resume_pdf' %}" class="waves-effect waves-teal">PDF</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'resume_api' %}" class="waves-effect waves-teal">JSON</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'works' %}" class="waves-effect waves-teal">Portfolio</a>
+      </li>
+      {% if user.is_authenticated %}
+      <li class="bold">
+        <a href="{% url 'update_account_form' %}" class="waves-effect waves-teal">Update Account</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_profile_form' %}" class="waves-effect waves-teal">Update Social Media</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_work_form' %}" class="waves-effect waves-teal">Update Work History</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_skills_form' %}" class="waves-effect waves-teal">Update Skills</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_awards_form' %}" class="waves-effect waves-teal">Update Awards</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_education_form' %}" class="waves-effect waves-teal">Update Education History</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_publications_form' %}" class="waves-effect waves-teal">Update Publications</a>
+      </li>
+      <li class="bold">
+        <a href="{% url 'update_interests_form' %}" class="waves-effect waves-teal">Update Interests</a>
+      </li>
+      {% endif %}
+    </ul>
+    <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="material-icons">menu</i></a>
+  </header>
+  <main>
+    <div class="container">
+      {% block innercontent %}
+      {% endblock %}
+    </div>
+  </main>
+{% endblock %}
+
+
+{% block js %}
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="{% static 'home/js/materialize.min.js' %}"></script>
+  <script>
+    $( document ).ready(function() {
+      $( ".button-collapse" ).sideNav();
+    });
+  </script>
+
+  {% block more-js %}
   {% endblock %}
 
 {% endblock %}

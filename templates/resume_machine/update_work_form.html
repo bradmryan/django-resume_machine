@@ -1,0 +1,122 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Work History</h3>
+
+    {% for work in jobs %}
+
+      <div class="row">
+        <div class="col s10">
+          <div class="card horizontal">
+            <div class="card-image">
+              <img src="http://lorempixel.com/100/190/nature/6">
+            </div>
+            <div class="card-stacked">
+              <div class="card-content">
+                <h4>{{ work.company }}</h4>
+                <p>{{ work.position }}</p>
+              </div>
+              <div class="card-action">
+                <a href="{{ work.website }}">{{ work.website }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="work-field-icon-{{ work.pk }}" class="material-icons small"></i>
+        <div class="input-field col s5">
+          <input value="{{ work.company }}" id="work_company_pk{{ work.pk }}" class="js-work-field" type="text" >
+          <label class="active" for="work_company_pk{{ work.pk }}">Company</label>
+        </div>
+        <div class="input-field col s5">
+          <input value="{{ work.position }}" id="work_position_pk{{ work.pk }}" class="js-work-field" type="text" >
+          <label class="active" for="work_position_pk{{ work.pk }}">position</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="work-website-field-icon-{{ work.pk }}" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <input value="{{ work.website }}" id="work_website_pk{{ work.pk }}" class="js-work-website-field" type="text" >
+          <label class="active" for="work_website_pk{{ work.pk }}">Website</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="work-date-field-icon-{{ work.pk }}" class="material-icons small"></i>
+        <div class="input-field col s5">
+          <input value="{{ work.startDate }}" id="work_startdate_pk{{ work.pk }}" class="js-work-date-field" type="text" >
+          <label class="active" for="work_startdate_pk{{ work.pk }}">Start Date</label>
+        </div>
+        <div class="input-field col s5">
+          <input value="{{ work.endDate }}" id="work_enddate_pk{{ work.pk }}" class="js-work-date-field" type="text" >
+          <label class="active" for="work_enddate_pk{{ work.pk }}">End Date</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="work-summary-field-icon" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <textarea id="work_summary_pk{{ work.pk }}" class="materialize-textarea"></textarea>
+          <label class="active" for="work_summary_pk{{ work.pk }}">Summary</label>
+        </div>
+      </div>
+
+      <div class="switch">
+        <label>
+          Volunteer<br>
+
+          No
+          <input type="checkbox" id="work_volunteer_pk{{ work.pk }}"
+            {% if job.volunteer %}
+              checked
+            {% endif %}
+          >
+          <span class="lever"></span>
+          Yes
+          <i id="work-volunteer-field-icon" class="material-icons small"></i>
+        </label>
+      </div>
+
+      <br>
+
+      {% for highlight in work.get_highlights %}
+        <div class="row">
+          <i id="work-highlight-field-icon-{{ work.pk }}" class="material-icons small"></i>
+          <div class="input-field col s5">
+            <input value="{{ highlight.text }}" id="work_highlight_pk{{ highlight.pk }}" class="js-work-highlight-field" type="text" >
+            <label class="active" for="work_highlight_pk{{ highlight.pk }}">Highlight</label>
+          </div>
+        </div>
+      {% endfor %}
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+    $( document ).ready(function() {
+
+      {% for work in jobs %}
+        $('#work_summary_pk{{ work.pk }}').val('{{ work.summary }}');
+        $('#work_summary_pk{{ work.pk }}').trigger('autoresize');
+      {% endfor %}
+
+      $('select').material_select();
+      $('.collapsible').collapsible();
+    });
+  </script>
+{% endblock %}

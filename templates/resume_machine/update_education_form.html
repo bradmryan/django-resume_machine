@@ -1,0 +1,98 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Education History</h3>
+
+    {% for program in education %}
+
+      <div class="row">
+        <div class="col s10">
+          <div class="card horizontal">
+            <div class="card-image">
+              <img src="http://lorempixel.com/100/190/nature/6">
+            </div>
+            <div class="card-stacked">
+              <div class="card-content">
+                <h4>{{ program.institution }}</h4>
+                <p>{{ program.area }}</p>
+              </div>
+              <div class="card-action">
+                <a href="{{ program.website }}">{{ program.website }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="program-field-icon-{{ program.pk }}" class="material-icons small"></i>
+        <div class="input-field col s5">
+          <input value="{{ program.institution }}" id="program_institution_pk{{ program.pk }}" class="js-program-field" type="text" >
+          <label class="active" for="program_institution_pk{{ program.pk }}">Institution</label>
+        </div>
+        <div class="input-field col s5">
+          <input value="{{ program.area }}" id="program_area_pk{{ program.pk }}" class="js-program-field" type="text" >
+          <label class="active" for="program_area_pk{{ program.pk }}">Area</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="program-studyType-field-icon-{{ program.pk }}" class="material-icons small"></i>
+        <div class="input-field col s10">
+          <input value="{{ program.studyType }}" id="program_studyType_pk{{ program.pk }}" class="js-program-studyType-field" type="text" >
+          <label class="active" for="program_studyType_pk{{ program.pk }}">Study Type</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <i id="program-date-field-icon-{{ work.pk }}" class="material-icons small"></i>
+        <div class="input-field col s3">
+          <input value="{{ program.startDate }}" id="program_startdate_pk{{ work.pk }}" class="js-program-date-field" type="text" >
+          <label class="active" for="program_startdate_pk{{ program.pk }}">Start Date</label>
+        </div>
+        <div class="input-field col s3">
+          <input value="{{ program.endDate }}" id="program_enddate_pk{{ program.pk }}" class="js-program-date-field" type="text" >
+          <label class="active" for="program_enddate_pk{{ work.pk }}">End Date</label>
+        </div>
+        <i id="program-gpa-field-icon" class="material-icons small"></i>
+        <div class="input-field col s4">
+          <input value="{{ program.gpa }}" id="program_gpa_pk{{ program.pk }}" class="js-program-gpa-field" type="text" >
+          <label class="active" for="program_gpa_pk{{ work.pk }}">GPA</label>
+        </div>
+      </div>
+
+      <br>
+
+      {% for course in program.get_courses %}
+        <div class="row">
+          <i id="course-field-icon-{{ course.pk }}" class="material-icons small"></i>
+          <div class="input-field col s2">
+            <input value="{{ course.coursecode }}" id="coursecode_pk{{ course.pk }}" class="js-course-field" type="text" >
+            <label class="active" for="coursecode_pk{{ course.pk }}">Course Code</label>
+          </div>
+          <div class="input-field col s8">
+            <input value="{{ course.description }}" id="course_description_pk{{ course.pk }}" class="js-course-field" type="text" >
+            <label class="active" for="course_description_pk{{ course.pk }}">Description</label>
+          </div>
+        </div>
+      {% endfor %}
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+
+  </script>
+{% endblock %}

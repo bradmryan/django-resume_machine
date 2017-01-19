@@ -1,0 +1,70 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Profiles</h3>
+
+    {% for profile in account.defaultResume.profiles.all %}
+
+      <div class="row">
+        <i id="profile-field-icon-{{ profile.pk }}" class="material-icons small"></i>
+        <div class="input-field col s2">
+          <input value="{{ profile.get_network_display }}" id="profile_network_pk{{ profile.pk }}" class="js-profile-field" type="text" disabled>
+          <label class="active" for="profile_network">Network</label>
+        </div>
+        <div class="input-field col s2">
+          <input value="{{ profile.username|title }}" id="profile_username_pk{{ profile.pk }}" class="js-profile-field" type="text"  >
+          <label class="active" for="profile_username">User Name</label>
+        </div>
+        <div class="input-field col s6">
+          <input value="{{ profile.url }}" id="profile_url_pk{{ profile.pk }}" class="js-profile-field" type="text" disabled >
+          <label class="active" for="profile_url">Url</label>
+        </div>
+      </div>
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+    $(".js-profile-field").change(function () {
+      var profile_id = $( this ).attr("id");
+      var pid_pos = profile_id.indexOf("pk");
+      var profile_pk = profile_id.substr(pid_pos + 2);
+
+      var username = $("#profile_username_pk" + profile_pk).val();
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "update_profile" 9999 %}'.replace(9999, profile_pk),
+        data:{
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+          'username': username,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+            $("#profile-field-icon-" + profile_pk).css("color", "green");
+            $("#profile-field-icon-" + profile_pk).html("done");
+            $("#profile_url_pk" + profile_pk).val(data.url)
+          } else {
+            $("#profile-field-icon-" + profile_pk).css("color", "red");
+            $("#profile-field-icon-" + profile_pk).html("error");
+          }
+        }
+      })
+
+    });
+  </script>
+
+{% endblock %}

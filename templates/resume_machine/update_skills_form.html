@@ -1,0 +1,61 @@
+{% extends 'resume_machine/profile.html' %}
+{% load staticfiles %}
+
+{% block innercontent %}
+
+  <h1>Update Resume</h1>
+
+
+  <form>
+    {% csrf_token %}
+
+    <h3>Skills</h3>
+
+    {% for skill in skills %}
+
+      <div class="row">
+        <i id="skill-field-icon-{{ skill.pk }}" class="material-icons small"></i>
+        <div class="input-field col s5">
+          <input value="{{ skill.name }}" id="skill_name_pk{{ skill.pk }}" class="js-skill-field" type="text" >
+          <label class="active" for="skill_name_pk{{ skill.pk }}">Skill</label>
+        </div>
+        <div class="input-field col s5">
+          <input value="{{ skill.level }}" id="skill_level_pk{{ skill.pk }}" class="js-skill-field" type="text" >
+          <label class="active" for="skill_level_pk{{ skill.pk }}">Level</label>
+        </div>
+      </div>
+
+      <p>Keywords</p>
+
+      <div id="skill_keyword_pk{{ skill.pk }}" class="chips"></div>
+
+
+    {% endfor %}
+
+  </form>
+
+{% endblock %}
+
+{% block more-js %}
+  <script>
+    {% for skill in skills %}
+      $('#skill_keyword_pk{{ skill.pk }}').material_chip({
+        data: [
+          {% for keyword in skill.keywords.all %}
+            { tag: '{{ keyword.word }}',},
+          {% endfor %}
+        ],
+        secondaryPlaceholder: '+Tag',
+      });
+    {% endfor %}
+
+    $('.chips').on('chip.add', function(e, chip){
+      // you have the added chip here
+    });
+
+    $('.chips').on('chip.delete', function(e, chip){
+      // you have the deleted chip here
+    });
+
+  </script>
+{% endblock %}
