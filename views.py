@@ -310,6 +310,27 @@ def create_language(request):
 
 
 @require_POST
+def create_reference(request):
+    data = {}
+    try:
+        name = request.POST.get('name', '')
+        description = request.POST.get('description', '')
+        if name and description:
+            reference = Reference(
+                user = request.user,
+                name = name,
+                reference = description
+            )
+            reference.save()
+            data = { 'success' : True, 'reference_pk' : reference.pk }
+        else:
+            data = { 'success' : False }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
 def update_name(request):
     data = { ' message' : 'fail' }
     try:
@@ -489,12 +510,40 @@ def update_language(request, language_pk):
 
 
 @require_POST
+def update_reference(request, reference_pk):
+    data = {}
+    try:
+        reference = get_object_or_404(Reference, pk=reference_pk, user=request.user)
+        name = request.POST.get('name', '')
+        description = request.POST.get('description', '')
+        reference.name = name
+        reference.reference = description
+        reference.save(update_fields=['name', 'reference'])
+        data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
 def delete_language(request, language_pk):
     data = {}
     try:
         language = get_object_or_404(Language, pk=language_pk, user=request.user)
         count = language.delete()
         data = { 'success': True, 'count' : count, 'language_pk' : language_pk }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def delete_reference(request, reference_pk):
+    data = {}
+    try:
+        reference = get_object_or_404(Reference, pk=reference_pk, user=request.user)
+        count = reference.delete()
+        data = { 'success': True, 'count' : count, 'reference_pk' : reference_pk }
     except:
         pass
     return JsonResponse(data)

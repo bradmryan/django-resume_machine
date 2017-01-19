@@ -178,28 +178,43 @@
 
     <h4>References</h4>
 
-    {% for reference in references %}
+    <div id="reference_row">
+      {% for reference in references %}
 
-      <div id="reference_row_pk{{ reference.pk }}" class="row">
-        <i id="reference-field-icon-{{ reference.pk }}" class="material-icons small"></i>
-        <div class="input-field col s4">
-          <input value="{{ reference.name }}" id="reference_name_pk{{ reference.pk }}" class="js-reference-field" type="text">
-          <label class="active" for="reference_name_pk{{ reference.pk }}">Name</label>
+        <div id="reference_row_pk{{ reference.pk }}" class="row">
+          <i id="reference-field-icon-{{ reference.pk }}" class="material-icons small"></i>
+          <div class="input-field col s4">
+            <input value="{{ reference.name }}" id="reference_name_pk{{ reference.pk }}" class="js-reference-field" type="text">
+            <label class="active" for="reference_name_pk{{ reference.pk }}">Name</label>
+          </div>
+          <div class="input-field col s4">
+            <input value="{{ reference.reference }}" id="reference_description_pk{{ reference.pk }}" class="js-reference-field" type="text">
+            <label class="active" for="reference_description_pk{{ reference.pk }}">Reference</label>
+          </div>
+          <div class="input-field col s1 center-align">
+            <a id="delete_reference_pk{{ reference.pk }}" class="delete_reference btn"><i class="material-icons">delete</i></a>
+          </div>
         </div>
-        <div class="input-field col s4">
-          <input value="{{ reference.reference }}" id="reference_reference_pk{{ reference.pk }}" class="js-reference-field" type="text">
-          <label class="active" for="reference_reference_pk{{ reference.pk }}">Reference</label>
-        </div>
-        <div class="input-field col s1 center-align">
-          <a id="delete_reference_pk{{ reference.pk }}" class="delete_reference btn"><i class="material-icons">delete</i></a>
-        </div>
+
+      {% endfor %}
+    </div>
+
+    <div id="new_reference_row" class="row">
+      <i id="reference-field-icon-new" class="material-icons small"></i>
+      <div class="input-field col s4">
+        <input id="reference_name_new" type="text">
+        <label class="active" for="reference_name_new">Name</label>
       </div>
-
-    {% endfor %}
-
+      <div class="input-field col s4">
+        <input id="reference_description_new" type="text">
+        <label class="active" for="reference_description_new">Reference</label>
+      </div>
+      <div class="input-field col s1 center-align">
+        <a id="new_reference" class="btn"><i class="material-icons">add</i></a>
+      </div>
+    </div>
 
   </form>
-
 
 {% endblock %}
 
@@ -235,10 +250,32 @@
         }
       }
     })
+  };
 
-  }
+  //Delete Reference Field
+  var delete_reference = function() {
+    var reference_id = $( this ).attr("id");
+    var rid_pos = reference_id.indexOf("pk");
+    var reference_pk = reference_id.substr(rid_pos + 2);
 
+    $.ajax({
+      method: 'POST',
+      url: '{% url "delete_reference" 0000 %}'.replace(0000, reference_pk),
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $('#reference_row_pk' + data.reference_pk).remove();
+        } else {
+          $("#delete_reference_pk" + reference_pk).css("color", "red");
+        }
+      }
+    })
+  };
 
+  //New Language - AJAX
   $('#new_language').click(function() {
 
     var name = $('#language_name_new').val();
@@ -276,9 +313,48 @@
   });
 
 
-  $('.delete_language').click(delete_language);
+  //New Reference - AJAX
+  $('#new_reference').click(function() {
 
-  //------------------------- AJAX --------------------
+    var name = $('#reference_name_new').val();
+    var description = $('#reference_description_new').val();
+
+    if (name && description) {
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "create_reference" %}',
+        data:{
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+          'name': name,
+          'description': description
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+              $('#new_reference_row').clone().prop('id', 'reference_row_pk' + data.reference_pk).appendTo("#reference_row");
+              $('#reference_description_new').attr('id', 'reference_description_pk' + data.reference_pk);
+              $('#reference_name_new').attr('id', 'reference_name_pk' + data.reference_pk);
+              $('#new_reference').attr('id', 'delete_reference_pk' + data.reference_pk);
+              $('#reference_name_new').val("");
+              $('#reference_description_new').val("");
+              $('#delete_reference_pk' + data.reference_pk).addClass('delete_reference');
+              $('#delete_reference_pk' + data.reference_pk).find('i').html('delete');
+              $('#delete_reference_pk' + data.reference_pk).click(delete_reference);
+          } else {
+            $("#new_reference").css("color", "red");
+          }
+        }
+      })
+
+    }
+  });
+
+
+  $('.delete_language').click(delete_language);
+  $('.delete_reference').click(delete_reference);
+
+  //------------------------- UPDATE--------------------
 
   //Update Name
   $(".js-name-field").change(function () {
@@ -538,6 +614,37 @@
         } else {
           $("#language-field-icon-" + language_pk).css("color", "red");
           $("#language-field-icon-" + language_pk).html("error");
+        }
+      }
+    })
+
+  });
+
+  //Update References
+  $(".js-reference-field").change(function () {
+    var reference_id = $( this ).attr("id");
+    var rid_pos = reference_id.indexOf("pk");
+    var reference_pk = reference_id.substr(rid_pos + 2);
+
+    var name = $("#reference_name_pk" + reference_pk).val();
+    var description = $("#reference_description_pk" + reference_pk).val();
+
+    $.ajax({
+      method: 'POST',
+      url: '{% url "update_reference" 0000 %}'.replace(0000, reference_pk),
+      data:{
+        'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        'name': name,
+        'description': description,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.success) {
+          $("#reference-field-icon-" + reference_pk).css("color", "green");
+          $("#reference-field-icon-" + reference_pk).html("done");
+        } else {
+          $("#reference-field-icon-" + reference_pk).css("color", "red");
+          $("#reference-field-icon-" + reference_pk).html("error");
         }
       }
     })

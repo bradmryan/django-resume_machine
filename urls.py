@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^api/references/$', views.references_list),
     url(r'^job_search/$', views.job_search, name='job_search'),
     url(r'^create/language/$', views.create_language, name='create_language'),
+    url(r'^create/reference/$', views.create_reference, name='create_reference'),
     url(r'^update/account/form/$', views.update_account_form, name='update_account_form'),
     url(r'^update/account/name/$', views.update_name, name='update_name'),
     url(r'^update/account/label/$', views.update_label, name='update_label'),
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^update/account/publishreferences/$', views.update_publishreferences, name='update_publishreferences'),
     url(r'^update/account/defaultresume/$', views.update_defaultresume, name='update_defaultresume'),
     url(r'^update/language/(?P<language_pk>[0-9]+)/$', views.update_language, name='update_language'),
+    url(r'^update/reference/(?P<reference_pk>[0-9]+)/$', views.update_reference, name='update_reference'),
     url(r'^update/profile/form/$', views.update_profile_form, name='update_profile_form'),
     url(r'^update/profile/(?P<profile_id>[0-9]+)/$', views.update_profile, name='update_profile'),
     url(r'^update/work/form/$', views.update_work_form, name='update_work_form'),
@@ -42,6 +44,7 @@ urlpatterns = [
     url(r'^update/publications/form/$', views.update_publications_form, name='update_publications_form'),
     url(r'^update/interests/form/$', views.update_interests_form, name='update_interests_form'),
     url(r'^delete/language/(?P<language_pk>[0-9]+)/$', views.delete_language, name='delete_language'),
+    url(r'^delete/reference/(?P<reference_pk>[0-9]+)/$', views.delete_reference, name='delete_reference'),
 
     #url(r'^$', views.resume_showcase, name='resume_showcase'),
 ]
