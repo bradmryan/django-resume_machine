@@ -41,12 +41,12 @@ def resume_create(request):
 
 
 @login_required
-def update_profile_form(request, resume_pk=None):
-    account = get_object_or_404(
-        Account,
-        user=request.user
-    )
-    context = { 'account' : account }
+def update_profile_form(request):
+    network_list = []
+    profiles = Profile.objects.filter(user=request.user)
+    for profile in profiles:
+        network_list.append(profile.network)
+    context = { 'profiles' : profiles, 'networks' : network_list }
     return render(request, 'resume_machine/update_profile_form.html', context)
 
 
@@ -289,6 +289,36 @@ def references_list(request):
 
 
 @require_POST
+def create_profile(request):
+    data = {}
+    try:
+        username = request.POST.get('username', '')
+        network = request.POST.get('network', '')
+        url = ""
+
+        if network == "TW":
+            url = "https://twitter.com/" + username
+        elif network == "FB":
+            url = "https://www.facebook.com/" + username
+        elif network == "LI":
+            url = "https://ca.linkedin.com/in/" + username
+        elif network == "GH":
+            url = "https://github.com/" + username
+
+        profile = Profile(
+            user = request.user,
+            network = network,
+            username = username,
+            url = url
+        )
+        profile.save()
+        data = { 'success' : True, 'url' : profile.url , 'pk' : profile.pk }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
 def create_language(request):
     data = {}
     try:
@@ -520,6 +550,19 @@ def update_reference(request, reference_pk):
         reference.reference = description
         reference.save(update_fields=['name', 'reference'])
         data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def delete_profile(request, profile_pk):
+    data = {}
+    try:
+        profile = get_object_or_404(Profile, pk=profile_pk, user=request.user)
+        network_name = profile.get_network_display()
+        count = profile.delete()
+        data = { 'success': True, 'count' : count, 'profile_pk' : profile_pk, 'network_name' : network_name }
     except:
         pass
     return JsonResponse(data)

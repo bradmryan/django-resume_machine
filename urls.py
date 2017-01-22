@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^api/interests/$', views.interests_list),
     url(r'^api/references/$', views.references_list),
     url(r'^job_search/$', views.job_search, name='job_search'),
+    url(r'^create/profile/$', views.create_profile, name='create_profile'),
     url(r'^create/language/$', views.create_language, name='create_language'),
     url(r'^create/reference/$', views.create_reference, name='create_reference'),
     url(r'^update/account/form/$', views.update_account_form, name='update_account_form'),
@@ -43,6 +44,7 @@ urlpatterns = [
     url(r'^update/education/form/$', views.update_education_form, name='update_education_form'),
     url(r'^update/publications/form/$', views.update_publications_form, name='update_publications_form'),
     url(r'^update/interests/form/$', views.update_interests_form, name='update_interests_form'),
+    url(r'^delete/profile/(?P<profile_pk>[0-9]+)/$', views.delete_profile, name='delete_profile'),
     url(r'^delete/language/(?P<language_pk>[0-9]+)/$', views.delete_language, name='delete_language'),
     url(r'^delete/reference/(?P<reference_pk>[0-9]+)/$', views.delete_reference, name='delete_reference'),
 

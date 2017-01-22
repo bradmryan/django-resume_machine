@@ -42,6 +42,7 @@
         <a href="{% url 'works' %}" class="waves-effect waves-teal">Portfolio</a>
       </li>
       {% if user.is_authenticated %}
+      <i class="material-icons">perm_identity</i>
       <li class="bold">
         <a href="{% url 'update_account_form' %}" class="waves-effect waves-teal">Update Account</a>
       </li>

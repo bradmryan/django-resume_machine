@@ -27,7 +27,7 @@ class Profile(models.Model):
         (FACEBOOK, 'Facebook'),
         (TWITTER, 'Twitter'),
         (LINKEDIN, 'Linkedin'),
-        (GITHUB, 'Github')
+        (GITHUB, 'GitHub')
     )
 
     network = models.CharField(max_length=2, choices=NETWORK_CHOICES)
@@ -39,6 +39,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.network + " " + self.username
+
 
     def as_json(self):
         return {

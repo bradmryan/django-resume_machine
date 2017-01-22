@@ -11,25 +11,50 @@
 
     <h3>Profiles</h3>
 
-    {% for profile in account.defaultResume.profiles.all %}
+    <div id="profile-box">
 
-      <div class="row">
-        <i id="profile-field-icon-{{ profile.pk }}" class="material-icons small"></i>
-        <div class="input-field col s2">
-          <input value="{{ profile.get_network_display }}" id="profile_network_pk{{ profile.pk }}" class="js-profile-field" type="text" disabled>
-          <label class="active" for="profile_network">Network</label>
-        </div>
-        <div class="input-field col s2">
-          <input value="{{ profile.username|title }}" id="profile_username_pk{{ profile.pk }}" class="js-profile-field" type="text"  >
-          <label class="active" for="profile_username">User Name</label>
-        </div>
-        <div class="input-field col s6">
-          <input value="{{ profile.url }}" id="profile_url_pk{{ profile.pk }}" class="js-profile-field" type="text" disabled >
-          <label class="active" for="profile_url">Url</label>
-        </div>
-      </div>
+      {% for profile in profiles %}
 
-    {% endfor %}
+        <div id="profile-row-pk{{ profile.pk }}" class="row">
+          <i id="profile-field-icon-{{ profile.pk }}" class="material-icons small"></i>
+          <div class="input-field col s2">
+            <input value="{{ profile.get_network_display }}" id="profile_network_pk{{ profile.pk }}" class="js-profile-field" type="text" readonly>
+            <label class="active" for="profile_network">Network</label>
+          </div>
+          <div class="input-field col s2">
+            <input value="{{ profile.username|title }}" id="profile_username_pk{{ profile.pk }}" class="js-profile-field" type="text"  >
+            <label class="active" for="profile_username">User Name</label>
+          </div>
+          <div class="input-field col s4">
+            <input value="{{ profile.url }}" id="profile_url_pk{{ profile.pk }}" class="js-profile-field" type="text" readonly >
+            <label class="active" for="profile_url">Url</label>
+          </div>
+          <div class="input-field col s1">
+            <a class="btn" href="{{ profile.url }}"><i class="material-icons">open_in_browser</i></a>
+          </div>
+          <div class="input-field col s1">
+            <a id="delete_profile_pk{{ profile.pk }}" class="delete_profile btn"><i class="material-icons">delete</i></a>
+          </div>
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+    <div class="row">
+      {% if 'TW' not in networks %}
+        <a  class="btn new-profile-btn">Add Twitter</a>
+      {% endif %}
+      {% if 'FB' not in networks %}
+        <a class="btn new-profile-btn">Add Facebook</a>
+      {% endif %}
+      {% if 'GH' not in networks %}
+        <a class="btn new-profile-btn">Add GitHub</a>
+      {% endif %}
+      {% if 'LI' not in networks %}
+        <a class="btn new-profile-btn">Add Linkedin</a>
+      {% endif %}
+    </div>
 
   </form>
 
@@ -37,7 +62,39 @@
 
 {% block more-js %}
   <script>
-    $(".js-profile-field").change(function () {
+
+    var delete_profile = function (){
+      var profile_id = $( this ).attr("id");
+      var pid_pos = profile_id.indexOf("pk");
+      var profile_pk = profile_id.substr(pid_pos + 2);
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "delete_profile" 0000 %}'.replace(0000, profile_pk),
+        data:{
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+
+            var profile_btn = "<a  class=\"btn new-profile-btn\">Add " + data.network_name + "</a>"
+
+            $("#profile-field-icon-" + data.profile_pk).css("color", "green");
+            $("#profile-field-icon-" + data.profile_pk).html("done");
+            $("#profile-row-pk" + data.profile_pk).remove();
+            $("#profile-box").after(profile_btn);
+            $(".new-profile-btn").click(new_profile_button)
+          } else {
+            $("#profile-field-icon-" + profile_pk).css("color", "red");
+            $("#profile-field-icon-" + profile_pk).html("error");
+          }
+        }
+      })
+
+    };
+
+    var update_profile = function () {
       var profile_id = $( this ).attr("id");
       var pid_pos = profile_id.indexOf("pk");
       var profile_pk = profile_id.substr(pid_pos + 2);
@@ -46,7 +103,7 @@
 
       $.ajax({
         method: 'POST',
-        url: '{% url "update_profile" 9999 %}'.replace(9999, profile_pk),
+        url: '{% url "update_profile" 0000 %}'.replace(0000, profile_pk),
         data:{
           'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
           'username': username,
@@ -63,8 +120,102 @@
           }
         }
       })
+    };
 
-    });
+    var new_profile =  function (obj) {
+      var fieldId = $( this ).attr('id');
+      var network = obj.data.profile;
+      var username = $(this).val();
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "create_profile" %}',
+        data:{
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+          'username': username,
+          'network' : network,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+            $("#new-profile-row" + network).attr("id", "profile-row-pk" + data.pk);
+            $("#profile-field-icon-new-" + network).attr("id", "profile-field-icon-" + data.pk);
+            $("#profile-network-new-" + network).attr("id", "profile_network_pk" + data.pk);
+            $("#profile-username-new-" + network).attr("id", "profile_username_pk" + data.pk);
+            $("#profile-url-new-" + network).attr("id", "profile_url_pk" + data.pk);
+
+            $("#profile_network_pk" + data.pk).removeClass("js-profile-field-new").addClass("js-profile-field");
+            $("#profile_username_pk" + data.pk).removeClass("js-profile-field-new").addClass("js-profile-field");
+            $("#profile_url_pk" + data.pk).removeClass("js-profile-field-new").addClass("js-profile-field");
+
+            var profile_buttons = "<div class=\"input-field col s1\">"
+                        + "<a class=\"btn\" href=\"" + data.url +"\"><i class=\"material-icons\">open_in_browser</i></a>"
+                      + "</div>"
+                      + "<div class=\"input-field col s1\">"
+                      +  "<a id=\"delete_profile_pk" + data.pk + "\" class=\"delete_profile btn\"><i class=\"material-icons\">delete</i></a>"
+                      + "</div>";
+
+            $("#profile-row-pk" + data.pk).append(profile_buttons);
+
+            $("#profile-field-icon-" + data.pk).css("color", "green");
+            $("#profile-field-icon-" + data.pk).html("done");
+
+            $("#profile_username_pk" + data.pk).change(update_profile);
+            $("#delete_profile_pk" + data.pk).click(delete_profile);
+            $("#profile_url_pk" + data.pk).val(data.url)
+          } else {
+            $("#profile-field-icon-new-" + profile).css("color", "red");
+            $("#profile-field-icon-new-" + profile).html("error");
+          }
+        }
+      })
+
+    };
+
+    var new_profile_button = function () {
+      var html = $(this).html();
+      var profile = html.substr(4);
+      var short = "";
+
+      if (profile == 'Twitter'){
+        var short = "TW";
+      } else if (profile == 'Facebook'){
+        var short = "FB";
+      } else if (profile == 'GitHub'){
+        var short = "GH";
+      } else if (profile == 'Linkedin'){
+        var short = "LI";
+      }
+
+      var profileRow = "<div id=\"new-profile-row" + short + "\" class=\"row\">"
+        + "<i id=\"profile-field-icon-new-" + short + "\" class=\"material-icons small\"></i>"
+        + "<div class=\"input-field col s2\">"
+        + "<input value=\"" + profile + "\" id=\"profile-network-new-" + short + "\" class=\"js-profile-field-new\" type=\"text\" readonly>"
+        + "<label class=\"active\" for=\"profile-network-new-" + short + "\">Network</label>"
+        + "</div>"
+        + "<div class=\"input-field col s2\">"
+        + "<input value=\"\" id=\"profile-username-new-" + short + "\" class=\"js-profile-field-new\" type=\"text\"  >"
+        + "<label for=\"profile-username-new-" + short + "\">User Name</label>"
+        + "</div>"
+        + "<div class=\"input-field col s4\">"
+        +   "<input value=\"\" id=\"profile-url-new-" + short + "\" class=\"js-profile-field-new\" type=\"text\" readonly >"
+        +   "<label for=\"profile-network-new-" + short + "\">Url</label>"
+        + "</div>"
+      + "</div>";
+
+      $("#profile-box").append(profileRow);
+
+      $(this).remove();
+
+      $("#profile-username-new-" + short).change({ profile : short }, new_profile);
+
+    };
+
+
+    $(".new-profile-btn").click(new_profile_button);
+    $(".js-profile-field").change(update_profile);
+    $(".delete_profile").click(delete_profile);
+
   </script>
 
 {% endblock %}
