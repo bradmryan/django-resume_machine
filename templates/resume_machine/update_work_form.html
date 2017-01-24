@@ -11,9 +11,102 @@
 
     <h3>Work History</h3>
 
-    {% for work in jobs %}
+    <div id="work_row">
 
-      <div class="row">
+      {% for work in jobs %}
+
+        <div id="work_row_pk{{ work.pk }}">
+
+          <div class="row">
+            <div class="col s10">
+              <div class="card horizontal">
+                <div class="card-image">
+                  <img src="http://lorempixel.com/100/190/nature/6">
+                </div>
+                <div class="card-stacked">
+                  <div class="card-content">
+                    <h4>{{ work.company }}</h4>
+                    <p>{{ work.position }}</p>
+                  </div>
+                  <div class="card-action">
+                    <a href="{{ work.website }}">{{ work.website }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s5">
+              <input value="{{ work.company }}" id="work_company_pk{{ work.pk }}" class="js-work-field" type="text" >
+              <label class="active" for="work_company_pk{{ work.pk }}">Company</label>
+            </div>
+            <div class="input-field col s5">
+              <input value="{{ work.position }}" id="work_position_pk{{ work.pk }}" class="js-work-field" type="text" >
+              <label class="active" for="work_position_pk{{ work.pk }}">position</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s10">
+              <input type="url" value="{{ work.website }}" id="work_website_pk{{ work.pk }}" class="js-work-field" type="text" >
+              <label class="active" for="work_website_pk{{ work.pk }}">Website</label>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="input-field col s5">
+              <input value="{{ work.startDate }}" id="work_startDate_pk{{ work.pk }}" class="js-work-field" type="text" >
+              <label class="active" for="work_startDate_pk{{ work.pk }}">Start Date</label>
+            </div>
+            <div class="input-field col s5">
+              <input value="{{ work.endDate }}" id="work_endDate_pk{{ work.pk }}" class="js-work-field" type="text" >
+              <label class="active" for="work_endDate_pk{{ work.pk }}">End Date</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s10">
+              <textarea id="work_summary_pk{{ work.pk }}" class="materialize-textarea js-work-field"></textarea>
+              <label class="active" for="work_summary_pk{{ work.pk }}">Summary</label>
+            </div>
+          </div>
+
+          <div class="switch">
+            <label>
+              Volunteer<br>
+              No
+              <input type="checkbox" id="work_volunteer_pk{{ work.pk }}" class="js-work-field"
+                {% if work.volunteer %}
+                  checked
+                {% endif %}
+              >
+              <span class="lever"></span>
+              Yes
+            </label>
+          </div>
+
+          <br>
+
+          {% for highlight in work.get_highlights %}
+            <div class="row">
+              <div class="input-field col s5">
+                <input value="{{ highlight.text }}" id="work_highlight_pk{{ highlight.pk }}" class="js-work-highlight-field" type="text" >
+                <label class="active" for="work_highlight_pk{{ highlight.pk }}">Highlight</label>
+              </div>
+            </div>
+          {% endfor %}
+
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+    <div id="work_row_new">
+
+      <div class="row" id="work_card_new">
         <div class="col s10">
           <div class="card horizontal">
             <div class="card-image">
@@ -21,11 +114,10 @@
             </div>
             <div class="card-stacked">
               <div class="card-content">
-                <h4>{{ work.company }}</h4>
-                <p>{{ work.position }}</p>
+                <h4>new</h4>
               </div>
               <div class="card-action">
-                <a href="{{ work.website }}">{{ work.website }}</a>
+                <a id="new_work_btn" class="btn">Add Entry</a>
               </div>
             </div>
           </div>
@@ -33,74 +125,60 @@
       </div>
 
       <div class="row">
-        <i id="work-field-icon-{{ work.pk }}" class="material-icons small"></i>
         <div class="input-field col s5">
-          <input value="{{ work.company }}" id="work_company_pk{{ work.pk }}" class="js-work-field" type="text" >
-          <label class="active" for="work_company_pk{{ work.pk }}">Company</label>
+          <input value="" id="work_company_new" class="js-work-field-new" type="text" >
+          <label class="active" for="work_company_new">Company</label>
         </div>
         <div class="input-field col s5">
-          <input value="{{ work.position }}" id="work_position_pk{{ work.pk }}" class="js-work-field" type="text" >
-          <label class="active" for="work_position_pk{{ work.pk }}">position</label>
+          <input value="" id="work_position_new" class="js-work-field-new" type="text" >
+          <label class="active" for="work_position_new">position</label>
         </div>
       </div>
 
       <div class="row">
-        <i id="work-website-field-icon-{{ work.pk }}" class="material-icons small"></i>
         <div class="input-field col s10">
-          <input value="{{ work.website }}" id="work_website_pk{{ work.pk }}" class="js-work-website-field" type="text" >
-          <label class="active" for="work_website_pk{{ work.pk }}">Website</label>
+          <input type="url" value="" id="work_website_new" class="js-work-field-new" type="text" >
+          <label class="active" for="work_website_new">Website</label>
         </div>
       </div>
 
       <div class="row">
-        <i id="work-date-field-icon-{{ work.pk }}" class="material-icons small"></i>
+
         <div class="input-field col s5">
-          <input value="{{ work.startDate }}" id="work_startdate_pk{{ work.pk }}" class="js-work-date-field" type="text" >
-          <label class="active" for="work_startdate_pk{{ work.pk }}">Start Date</label>
+          <input value="" placeholder="Mon. dd, YYYY" id="work_startDate_new" class="js-work-field-new" type="text" >
+          <label class="active" for="work_startDate_new">Start Date</label>
         </div>
         <div class="input-field col s5">
-          <input value="{{ work.endDate }}" id="work_enddate_pk{{ work.pk }}" class="js-work-date-field" type="text" >
-          <label class="active" for="work_enddate_pk{{ work.pk }}">End Date</label>
+          <input value="" placeholder="Mon. dd, YYYY or current" id="work_endDate_new" class="js-work-field-new" type="text" >
+          <label class="active" for="work_endDate_new">End Date</label>
         </div>
       </div>
 
       <div class="row">
-        <i id="work-summary-field-icon" class="material-icons small"></i>
         <div class="input-field col s10">
-          <textarea id="work_summary_pk{{ work.pk }}" class="materialize-textarea"></textarea>
-          <label class="active" for="work_summary_pk{{ work.pk }}">Summary</label>
+          <textarea id="work_summary_new" class="materialize-textarea js-work-field-new"></textarea>
+          <label class="active" for="work_summary_new">Summary</label>
         </div>
       </div>
 
       <div class="switch">
         <label>
           Volunteer<br>
-
           No
-          <input type="checkbox" id="work_volunteer_pk{{ work.pk }}"
-            {% if job.volunteer %}
+          <input type="checkbox" id="work_volunteer_new" class="js-work-field-new"
+            {% if work.volunteer %}
               checked
             {% endif %}
           >
           <span class="lever"></span>
           Yes
-          <i id="work-volunteer-field-icon" class="material-icons small"></i>
         </label>
       </div>
 
       <br>
 
-      {% for highlight in work.get_highlights %}
-        <div class="row">
-          <i id="work-highlight-field-icon-{{ work.pk }}" class="material-icons small"></i>
-          <div class="input-field col s5">
-            <input value="{{ highlight.text }}" id="work_highlight_pk{{ highlight.pk }}" class="js-work-highlight-field" type="text" >
-            <label class="active" for="work_highlight_pk{{ highlight.pk }}">Highlight</label>
-          </div>
-        </div>
-      {% endfor %}
+    </div>
 
-    {% endfor %}
 
   </form>
 
@@ -118,5 +196,115 @@
       $('select').material_select();
       $('.collapsible').collapsible();
     });
+
+    var create_work = function(){
+      var company = $("#work_company_new").val();
+      var position = $("#work_position_new").val();
+      var website = $("#work_website_new").val();
+      var startDate = $("#work_startDate_new").val();
+      var endDate = $("#work_endDate_new").val();
+      var summary = $("#work_summary_new").val();
+
+      if (company != "" && position != "" && website != "" && startDate != "" && endDate != "" && summary != "") {
+        if ($("#work_volunteer_new").is(":checked")){
+          var volunteer = true;
+        } else {
+          var volunteer = false;
+        }
+
+        $.ajax({
+          method: 'POST',
+          url: "{% url 'create_work' %}",
+          data: {
+            'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+            'company': company,
+            'position': position,
+            'website': website,
+            'startDate': startDate,
+            'endDate': endDate,
+            'summary': summary,
+            'volunteer': volunteer,
+          },
+          dataTyle: 'json',
+          success: function (data){
+            if (data.success){
+              $('#work_row_new').clone().prop('id', 'work_row_pk' + data.work_pk).appendTo('#work_row');
+              $('#work_card_new').attr('id', 'work_card_pk' + data.work_pk);
+              $('#work_company_new').attr('id', 'work_company_pk' +  data.work_pk);
+              $('#work_position_new').attr('id', 'work_position_pk' + data.work_pk);
+              $('#work_website_new').attr('id', 'work_website_pk' + data.work_pk);
+              $('#work_startDate_new').attr('id', 'work_startDate_pk' + data.work_pk);
+              $('#work_endDate_new').attr('id', 'work_endDate_pk' + data.work_pk);
+              $('#work_summary_new').attr('id', 'work_summary_pk' + data.work_pk);
+              $('#work_volunteer_new').attr('id', 'work_volunteer_pk' + data.work_pk);
+              $('#work_card_pk' + data.work_pk).find('.card-content').html('<h4>' + position + '</h4><p>' + company + '</p>');
+              $('#work_card_pk' + data.work_pk).find('.card-action').html('<a href="' + website + '">' + website + '</a>');
+
+              $('#work_company_new').val("");
+              $('#work_position_new').val("");
+              $('#work_website_new').val("");
+              $('#work_startDate_new').val("");
+              $('#work_endDate_new').val("");
+              $('#work_summary_new').val("");
+
+
+            } else {
+              alert("failed");
+            }
+          }
+        });
+
+      } else {
+        alert ("Fill out all fields");
+      }
+
+    };
+
+    var update_work = function(){
+      var id = $(this).attr("id");
+      var pos1 = id.indexOf("_");
+      var pos2 = id.indexOf("_pk");
+
+      var field = id.substr(pos1+1, pos2-pos1-1);
+
+      if ($(this).attr("type") == "checkbox"){
+        if (this.checked) {
+          var value = true;
+        } else {
+          var value = false;
+        }
+      } else {
+        var value = $(this).val();
+      }
+      var pk = id.substr(pos2+3);
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "update_work" %}',
+        data: {
+          'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+          'field' : field,
+          'value' : value,
+          'pk' : pk,
+        },
+        dataType: 'json',
+        success : function(data) {
+          if (data.success) {
+            $("#" + id).css("color", "green");
+          } else {
+            $("#" + id).css("color", "red");
+          }
+        }
+      })
+    };
+
+
+    var delete_work = function(){
+
+    };
+
+    $(".js-work-field").change(update_work);
+    $("#new_work_btn").click(create_work);
+
   </script>
 {% endblock %}

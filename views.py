@@ -5,9 +5,10 @@ from django.template.loader import get_template
 from django.template import RequestContext
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
-from resume_machine.models import Resume, Account, Profile, Skill, Award, Publication, Interest, Language, Reference
+from resume_machine.models import Resume, Account, Profile, Skill, Award, Publication, Interest, Language, Reference, Work
 from django.contrib.sites.models import Site
 
+from datetime import datetime
 
 import feedparser
 import weasyprint
@@ -51,20 +52,8 @@ def update_profile_form(request):
 
 
 @login_required
-def update_work_form(request, resume_pk=None):
-    if resume_pk:
-        resume = get_object_or_404(
-            Resume,
-            pk=resume_pk,
-            user=request.user
-        )
-        work_history = resume.work.all()
-    else:
-        account = get_object_or_404(
-            Account,
-            user=request.user
-        )
-        work_history = account.defaultResume.work.all()
+def update_work_form(request):
+    work_history = Work.objects.filter(user=request.user)
     context = { 'jobs' : work_history }
     return render(request, 'resume_machine/update_work_form.html', context)
 
@@ -361,6 +350,48 @@ def create_reference(request):
 
 
 @require_POST
+def create_work(request):
+    data = {}
+    try:
+        company = request.POST.get('company', '')
+        position = request.POST.get('position', '')
+        website = request.POST.get('website', '')
+        startDate = request.POST.get('startDate', '')
+        endDate = request.POST.get('endDate', '')
+        summary = request.POST.get('summary', '')
+        volunteer = request.POST.get('volunteer', '')
+
+        if company and position and website and startDate and endDate and summary and volunteer:
+            if endDate == 'current':
+                endDate = None;
+            else:
+                endDate = datetime.strptime(endDate, "%b. %d, %Y")
+            if volunteer == 'true':
+                volunteer = True
+            else:
+                volunteer = False
+
+            startDate = datetime.strptime(startDate, "%b. %d, %Y")
+
+
+            work = Work(
+                user = request.user,
+                company = company,
+                position = position,
+                website = website,
+                startDate = startDate,
+                endDate = endDate,
+                summary = summary,
+                volunteer = volunteer
+            )
+            work.save()
+            data = { 'success' : True, 'work_pk' : work.pk }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
 def update_name(request):
     data = { ' message' : 'fail' }
     try:
@@ -550,6 +581,29 @@ def update_reference(request, reference_pk):
         reference.reference = description
         reference.save(update_fields=['name', 'reference'])
         data = { 'success': True }
+    except:
+        pass
+    return JsonResponse(data)
+
+
+@require_POST
+def update_work(request):
+    data = {}
+    try:
+        field = request.POST.get('field', '')
+        value = request.POST.get('value', '')
+        pk = request.POST.get('pk', '')
+        work = get_object_or_404(Work, pk=pk, user=request.user)
+        if field in ['startDate', 'endDate']:
+            value = datetime.strptime(value, "%b. %d, %Y")
+        elif field == "volunteer":
+            if value.lower() == 'true':
+                value = True
+            else:
+                value = False
+        setattr(work, field, value)
+        work.save(update_fields=[field,])
+        data = {'success' : True}
     except:
         pass
     return JsonResponse(data)
