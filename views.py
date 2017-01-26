@@ -108,7 +108,6 @@ def resume_html(request):
         site=Site.objects.get(id=1)
     )
     context = {
-        'user': account.user,
         'resume':account.defaultResume
     }
     return render(request, 'resume_machine/resume.html', context)

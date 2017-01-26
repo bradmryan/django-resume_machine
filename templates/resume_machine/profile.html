@@ -41,32 +41,32 @@
       <li class="bold">
         <a href="{% url 'works' %}" class="waves-effect waves-teal">Portfolio</a>
       </li>
-      {% if user.is_authenticated %}
-      <i class="material-icons">perm_identity</i>
-      <li class="bold">
-        <a href="{% url 'update_account_form' %}" class="waves-effect waves-teal">Update Account</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_profile_form' %}" class="waves-effect waves-teal">Update Social Media</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_work_form' %}" class="waves-effect waves-teal">Update Work History</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_skills_form' %}" class="waves-effect waves-teal">Update Skills</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_awards_form' %}" class="waves-effect waves-teal">Update Awards</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_education_form' %}" class="waves-effect waves-teal">Update Education History</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_publications_form' %}" class="waves-effect waves-teal">Update Publications</a>
-      </li>
-      <li class="bold">
-        <a href="{% url 'update_interests_form' %}" class="waves-effect waves-teal">Update Interests</a>
-      </li>
+      {% if request.user.is_authenticated %}
+        <i class="material-icons">perm_identity</i>
+        <li class="bold">
+          <a href="{% url 'update_account_form' %}" class="waves-effect waves-teal">Update Account</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_profile_form' %}" class="waves-effect waves-teal">Update Social Media</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_work_form' %}" class="waves-effect waves-teal">Update Work History</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_skills_form' %}" class="waves-effect waves-teal">Update Skills</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_awards_form' %}" class="waves-effect waves-teal">Update Awards</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_education_form' %}" class="waves-effect waves-teal">Update Education History</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_publications_form' %}" class="waves-effect waves-teal">Update Publications</a>
+        </li>
+        <li class="bold">
+          <a href="{% url 'update_interests_form' %}" class="waves-effect waves-teal">Update Interests</a>
+        </li>
       {% endif %}
     </ul>
     <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="material-icons">menu</i></a>

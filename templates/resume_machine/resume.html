@@ -3,16 +3,16 @@
 
 {% block innercontent %}
     <div>
-      <h1>{{ user.account.get_full_name }}</h1><hr>
+      <h1>{{ resume.user.account.get_full_name }}</h1><hr>
       <div class="indent">
-        <p>{{ user.account.city }}, {{ user.account.region}}, {{ user.account.countrycode }}</p>
-        <p>{{ user.email }}</p>
-        <p>{{ user.account.phone }}</p>
-        <p>{{ user.account.website }}</p>
+        <p>{{ resume.user.account.city }}, {{ resume.user.account.region}}, {{ resume.user.account.countrycode }}</p>
+        <p>{{ resume.user.email }}</p>
+        <p>{{ resume.user.account.phone }}</p>
+        <p>{{ resume.user.account.website }}</p>
       </div>
       <strong>Summary</strong><hr>
       <div class="indent">
-        <p>{{ user.account.summary }}</p>
+        <p>{{ resume.user.account.summary }}</p>
       </div>
       <strong>Education</strong><hr>
       <div class="indent">
@@ -120,7 +120,7 @@
           {% endfor %}
         </div>
       {% endif %}
-      
+
       </div>
     </div>
 {% endblock %}
